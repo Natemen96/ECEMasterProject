@@ -2,7 +2,7 @@ import numpy as np
 # import math
 # import os 
 # import matplotlib.pyplot as plt
-# import matplotlib.dates as mdates
+import matplotlib.dates as mdates
 import multiprocessing
 # import seaborn as sns
 # import pickle
@@ -26,8 +26,7 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing as HWES
 # from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 # from statsmodels.tsa.statespace.sarimax import SARIMAX
 
-
-Dataset = r'15minute_data_newyork\15minute_data_newyork.csv'
+Dataset = r'ECEMasterProject\15minute_data_newyork\15minute_data_newyork.csv'
 fulldata = pd.read_csv(Dataset) 
 data=fulldata[['dataid','local_15min','grid']]
 sorteddata=data.sort_values(by = ['dataid', 'local_15min'])
@@ -50,14 +49,13 @@ df = pd.DataFrame(housing_data[0], columns=['15min_ints','grid']).set_index('15m
 RANDOM_SEED = 42
 train_df = df.iloc[:-900, :]
 test_df = df.iloc[-900:, :]
-# train_df, val_df = train_test_split(df,test_size=0.15,random_state=RANDOM_SEED)
-# val_df, test_df = train_test_split(val_df,test_size=0.33, random_state=RANDOM_SEED)
+
 pred_df = test_df.copy()
 
 grid_params = {
-    'seasonal_periods': np.linspace(1,300, num=300),
-    'damped_trendbool': [True,False],
-    'initialization_method': ['estimated','heuristic','legacy-heuristic','known']
+    'seasonal_periods': np.linspace(2,300, num=299),
+    'damped_trend': [True,False],
+    'initialization_method': ['estimated','heuristic','legacy-heuristic']
 }
 grid = list(ParameterGrid(grid_params))
 
@@ -66,8 +64,7 @@ def evaluate_single(args):
     print('Evaluating params: {}'.format(params))
     params = {**params}
 
-
-    solver = HWES(train_df, trend="add", seasonal="add", **params).fit().forecast(900)
+    pred = HWES(train_df, trend="add", seasonal="add", **params).fit().forecast(900)
     score = np.sqrt(np.mean(np.square(test_df.values - pred.values)))
 
     print('Finished evaluating set {} with score of {}.'.format(index, score))
@@ -76,11 +73,12 @@ def evaluate_single(args):
 def run():
     start_time = time.time()
     print('About to evaluate {} parameter sets.'.format(len(grid)))
-    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count()//2)
     final_scores = pool.map(evaluate_single, list(enumerate(grid)))
 
     print('Best parameter set was {} with score of {}'.format(grid[np.argmin(final_scores)], np.min(final_scores)))
     print('Worst parameter set was {} with score of {}'.format(grid[np.argmax(final_scores)], np.max(final_scores)))
     print('Execution time: {} sec'.format(time.time() - start_time))
 
-run()
+if __name__ == '__main__':
+    run()
