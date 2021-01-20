@@ -1,0 +1,15 @@
+name: tf
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - tensorflow
+  - keras
+  - pillow
+  - opencv
+  - tqdm
+  - matplotlib
+  - pandas
+  - scikit-learn
+  - ipykernel
+prefix: C:\ProgramData\Anaconda3\envs\tf
