@@ -1,0 +1,254 @@
+001  Anderson County, Palestine, Texas                 Abilene
+002  Andrews County, Andrews, Texas                   Albany
+003  Angelina County, Lufkin, Texas                       Alice
+004  Aransas County, Rockport, Texas                   Alpine
+005  Archer County, Archer City, Texas                  Amarillo
+006  Armstrong County, Claude, Texas                  Anahuac
+007  Atascosa County, Jourdanton, Texas             Anderson
+008  Austin County, Bellville, Texas                        Andrews
+009  Bailey County, Muleshoe, Texas                     Angleton                    
+010  Bandera County, Bandera, Texas                   Anson
+011  Bastrop County, Bastrop, Texas                      Archer City
+012  Baylor County, Seymour, Texas                      Aspermont
+013  Bee County, Beeville, Texas                           Athens
+014  Bell County, Belton, Texas                              Austin
+015  Bexar County, San Antonio, Texas                 Baird
+016  Blanco County, Johnson City, Texas              Ballinger
+017  Borden County, Gail, Texas                            Bandera
+018  Bosque County, Meridian, Texas                    Bastrop
+019  Bowie County, Boston, Texas                         Bay City
+020  Brazoria County, Angleton, Texas                   Beaumont
+021  Brazos County, Bryan, Texas                          Bellville
+022  Brewster County, Alpine, Texas                       Belton
+023  Briscoe County, Silverton, Texas                     Benjamin
+024  Brooks County, Falfurrias, Texas                     Beeville
+025  Brown County, Brownwood, Texas                  Big Lake
+026  Burleson County, Caldwell, Texas                   Big Spring
+027  Burnet County, Burnet, Texas                          Boerne
+028  Caldwell County, Lockhart, Texas                    Bonham
+029  Calhoun County, Port Lavaca, Texas               Boston
+030  Callahan County, Baird, Texas                         Brackettville
+031  Cameron County, Brownsville, Texas               Brady
+032  Camp County, Pittsburg, Texas                        Breckenridge
+033  Carson County, Panhandle, Texas                   Brenham
+034  Cass County, Linden, Texas                             Brownfield
+035  Castro County, Dimmitt, Texas                         Brownwood
+036  Chambers County, Anahuac, Texas                 Bryan
+037  Cherokee County, Rusk, Texas                        Burnet
+038  Childress County, Childress, Texas                  Caldwell
+039  Clay County, Henrietta, Texas                          Cameron
+040  Cochran County, Morton, Texas                       Canadian
+041  Coke County, Robert Lee, Texas                      Canton
+042  Coleman County, Coleman, Texas                   Canyon
+043  Collin County, McKinney, Texas                       Carrizo Springs
+044  Collingsworth County, Wellington, Texas         Carthage
+045  Colorado County, Columbus, Texas                 Center
+046  Comal County, New Braunfels, Texas              Centerville
+047  Comanche County, Comanche, Texas             Channing
+048  Concho County, Paint Rock, Texas                  Childress
+049  Cooke County, Gainesville, Texas                    Clarksville
+050  Coryell County, Gatesville, Texas                     Cleburne
+051  Cottle County, Paducah, Texas                        Clarendon
+052  Crane County, Crane, Texas                            Claude
+053  Crockett County, Ozona, Texas                        Cold Spring
+054  ﻿Crosby County, Crosbyton                                Coleman
+﻿055  Culberson County, Van Horn, Texas                 Colorado City
+056  Dallam County, Dalhart, Texas                         Columbus 
+057  Dallas County, Dallas, Texas                            Comanche 
+058  Dawson County, Lamesa, Texas                      Conroe
+059  Deaf Smith County, Hereford, Texas                Cooper
+060  Delta County, Cooper, Texas                            Corpus Christi
+061  Denton County, Denton, Texas                         Corsicana
+062  DeWitt County, Cuero, Texas                            Cotulla
+063  Dickens County, Dickens, Texas                       Crane
+064  Dimmit County, Carrizo Springs, Texas             Crockett
+065  Donley County, Clarendon, Texas                     Crosbyton
+066  Duval County, San Diego, Texas                       Crowell
+067  Eastland County, Eastland, Texas                     Crystal City        
+068  Ector County, Odessa, Texas                            Cuero
+069  Edwards County, Rocksprings, Texas               Daingerfield
+070  Ellis County, Waxahachie, Texas                       Dalhart
+071  El Paso County, El Paso, Texas                        Dallas
+072  Erath County, Stephenville, Texas                     Decatur
+073  Falls County, Marlin, Texas                                Del Rio
+074  Fannin County, Bonham, Texas                         Denton 
+075  Fayette County, La Grange, Texas                    Dickens
+076  Fisher County, Roby, Texas                               Dimmitt
+077  Floyd County, Floydada, Texas                          Dumas
+078  Foard County, Crowell, Texas                            Eagle Pass
+079  Fort Bend County, Richmond, Texas                  Eastland
+080  Franklin County, Mount Vernon, Texas               Edinburg
+081  Freestone County, Fairfield, Texas                     Edna
+082  Frio County, Pearsall, Texas                               El Paso                        
+083  Gaines County, Seminole, Texas                        Emory
+084  Galveston County, Galveston, Texas                  Eldorado
+085  Garza County, Post, Texas                                 Fairfield
+086  Gillespie County, Fredericksburg, Texas            Falfurrias
+087  Glasscock County, Garden City, Texas               Farwell
+088  Goliad County, Goliad, Texas                              Floresville
+089  Gonzales County, Gonzales, Texas                    Fort Davis
+090  Gray County, Pampa, Texas                               Fort Worth
+091  Grayson County, Sherman, Texas                      Fort Stockton
+092  Gregg County, Longview, Texas                         Floydada
+093  Grimes County, Anderson, Texas                       Franklin
+094  Guadalupe County, Seguin, Texas                     Fredericksburg
+095  Hale County, Plainview, Texas                           Gail
+096  Hall County, Memphis, Texas                             Gainesville
+097  Hamilton County, Hamilton, Texas                     Galveston
+098  Hansford County, Spearman, Texas                  Garden City
+099  Hardeman County, Quanah, Texas                    Gatesville
+100  Hardin County, Kountze, Texas                          Georgetown
+101  ﻿Harris County, Houston, Texas                           George West﻿
+102  Harrison County, Marshall, Texas                       Giddings
+103  Hartley County, Channing, Texas                        Gilmer
+104  Haskell County, Haskell, Texas                           Glen Rose
+105  Hays County, San Marcos, Texas                       Goldthwaite
+106  Hemphill County, Canadian, Texas                     Goliad
+107  Henderson County, Athens, Texas                      Gonzales
+108  Hidalgo County, Edinburg, Texas                        Graham
+109  Hill County, Hillsboro, Texas                                Granbury
+110  Hockley County, Levelland, Texas                       Greenville
+111  Hood County, Granbury, Texas                            Groesbeck
+112  Hopkins County, Sulphur Springs, Texas             Groveton
+113  Houston County, Crockett, Texas                         Guthrie
+114  Howard County, Big Spring, Texas                       Hallettsville
+115  Hudspeth County, Sierra Blanca, Texas               Hamilton
+116  Hunt County, Greenville, Texas                            Haskell
+117  Hutchinson County, Stinnett, Texas                      Hebbronville
+118  Irion County, Mertzon, Texas                                Hemphill
+119  Jack County, Jacksboro, Texas                            Hempstead
+120  Jackson County, Edna, Texas                              Henderson
+121  Jasper County, Jasper, Texas                              Henrietta
+122  Jeff Davis County, Fort Davis, Texas                   Hereford
+123  Jefferson County, Beaumont, Texas                    Hondo
+124  Jim Hogg County, Hebbronville, Texas                Houston
+125  Jim Wells County, Alice, Texas                            Huntsville
+126  Johnson County, Cleburne, Texas                       Jacksboro
+127  Jones County, Anson, Texas                                Jasper
+128  Karnes County, Karnes City, Texas
+129  Kaufman County, Kaufman, Texas
+130  Kendall County, Boerne, Texas
+131  Kenedy County, Sarita, Texas
+132  Kent County, Jayton, Texas
+133  Kerr County, Kerrville, Texas
+134  Kimble County, Junction, Texas
+135  King County, Guthrie, Texas
+136  Kinney County, Brackettville, Texas
+137  Kleberg County, Kingsville, Texas
+138  Knox County, Benjamin, Texas
+139  Lamar County, Paris, Texas
+140  Lamb County, Littlefield, Texas
+141  Lampasas County, Lampasas, Texas
+142  La Salle County, Cotulla, Texas
+143  Lavaca County, Hallettsville, Texas
+144  Lee County, Giddings, Texas
+145  Leon County, Centerville, Texas
+146  Liberty County, Liberty, Texas
+147  Limestone County, Groesbeck, Texas
+148  Lipscomb County, Lipscomb, Texas
+149  Live Oak County, George West, Texas
+150  Llano County, Llano, Texas
+151  Loving County, Mentone, Texas 
+152  Lubbock County, Lubbock, Texas
+153  Lynn County, Tahoka, Texas
+154  McCulloch County, Brady, Texas
+155  McLennan County, Waco, Texas
+156  McMullen County, Tilden, Texas
+157  Madison County, Madisonville, Texas
+158  Marion County, Jefferson, Texas
+159  Martin County, Stanton, Texas
+160  Mason County, Mason, Texas
+161  Matagorda County, Bay City, Texas
+162  Maverick County, Eagle Pass, Texas 
+163  Medina County, Hondo, Texas
+164  Menard County, Menard, Texas
+165  Midland County, Midland, Texas
+166  Milam County, Cameron, Texas
+167  Mills County, Goldthwaite, Texas
+168  Mitchell County, Colorado City, Texas
+169  Montague County, Montague, Texas
+170  Montgomery County, Conroe, Texas
+171  Moore County, Dumas, Texas
+172  Morris County, Daingerfield, Texas
+173  Motley County, Matador, Texas
+174  Nacogdoches County, Nacogdoches, Texas
+175  Navarro County, Corsicana, Texas
+176  Newton County, Newton, Texas
+177  Nolan County, Sweetwater, Texas
+178  Nueces County, Corpus Christi, Texas
+179  Ochiltree County, Perryton, Texas
+180  Oldham County, Vega, Texas
+181  Orange County, Orange, Texas
+182  Palo Pinto County, Palo Pinto, Texas
+183  Panola County, Carthage, Texas
+184  Parker County, Weatherford, Texas
+185  Parmer County, Farwell, Texas
+186  Pecos County, Fort Stockton, Texas
+187  Polk County, Livingston, Texas
+188  Potter County, Amarillo, Texas
+189  Presidio County, Marfa, Texas
+190  Rains County, Emory, Texas
+191  ﻿Randall County, Canyon, Texas﻿
+192  Reagan County, Big Lake, Texas
+193  Real County, Leakey, Texas
+194  Red River County, Clarksville, Texas
+195  Reeves County, Pecos, Texas
+196  Refugio County, Refugio, Texas
+197  Roberts County, Miami, Texas
+198  Robertson County, Franklin, Texas
+199  Rockwall County, Rockwall, Texas
+200  Runnels County, Ballinger, Texas
+201  Rusk County, Henderson, Texas
+202  Sabine County, Hemphill, Texas
+203  San Augustine County, San Augustine, Texas
+204  San Jacinto County, Coldspring, Texas
+205  San Patricio County, Sinton, Texas
+206  San Saba County, San Saba, Texas
+207  ﻿Schleicher County, Eldorado, Texas
+﻿208  Scurry County, Snyder, Texas
+209  Shackelford County, Albany, Texas
+210  Shelby County, Center, Texas
+211  Sherman County, Stratford, Texas
+212  Smith County, Tyler, Texas
+213  Somervell County, Glen Rose, Texas
+214  Starr County, Rio Grande City, Texas
+215  Stephens County, Breckenridge, Texas
+216  Sterling County, Sterling City, Texas
+217  Stonewall County, Aspermont, Texas
+218  ﻿Sutton County, Sonora, Texas﻿
+219  Swisher County, Tulia, Texas
+220  Tarrant County, Fort Worth, Texas
+221  Taylor County, Abilene, Texas
+222  Terrell County, Sanderson, Texas
+223  Terry County, Brownfield, Texas
+224  Throckmorton County, Throckmorton, Texas
+225  Titus County, Mount Pleasant, Texas
+226  Tom Green County, San Angelo, Texas
+227  Travis County, Austin, Texas
+228  Trinity County, Groveton, Texas
+229  Tyler County, Woodville, Texas
+230  Upshur County, Gilmer, Texas
+231  Upton County, Rankin, Texas
+232  Uvalde County, Uvalde, Texas
+233  Val Verde County, Del Rio, Texas
+234  Van Zandt County, Canton, Texas
+235  Victoria County, Victoria, Texas
+236  Walker County, Huntsville, Texas
+237  Waller County, Hempstead, Texas
+238  Ward County, Monahans, Texas
+239  Washington County, Brenham, Texas
+240  Webb County, Laredo, Texas
+241  Wharton County, Wharton, Texas
+242  Wheeler County, Wheeler, Texas
+243  Wichita County, Wichita Falls, Texas
+244  Wilbarger County, Vernon, Texas
+245  Willacy County, Raymondville, Texas
+246  Williamson County, Georgetown, Texas
+247  Wilson County, Floresville, Texas
+248  Winkler County, Kermit, Texas
+249  Wise County, Decatur, Texas
+250  Wood County, Quitman, Texas
+251  Yoakum County, Plains, Texas
+252  Young County, Graham, Texas
+253  Zapata County, Zapata, Texas
+254  Zavala County, Crystal City, Texas
