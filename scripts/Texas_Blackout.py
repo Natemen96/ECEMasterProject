@@ -1,15 +1,17 @@
-import requests
+# import requests
 import os
 import csv
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver as web
 from selenium.webdriver.common.action_chains import ActionChains
 from datetime import datetime
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+import time
 
-PATH = 'ECEMasterProject\scripts\Data\TexasBlackout.csv'
+PATH = 'ECEMasterProject/scripts/Data/TexasBlackout.csv'
 
 def write_to_csv(tosave):
     "Helper function to write to csv to make data collection less painful"
@@ -40,25 +42,36 @@ IDS = [1510,1734,1762,1801,1858,
 1427, 1459, 1490, 1371, 1410, 1465, 1448, 1419, 1501, 1409, 1341, 1415, 
 1471, 1397, 1494, 1347, 1332, 1581, 1454, 1329, 1481]
 
+i =0
+# print(len(IDS))
+def main(IDS):
+    global i
+    while True:
+        try:
+            for id in IDS:
+                # driver = web.Chrome(executable_path=binary_path)
+                driver = web.Chrome(ChromeDriverManager().install())
+                driver.get(f'https://poweroutage.us/area/county/{id}')
 
-print(len(IDS))
-while True:
-    for id in IDS:
+                name = "//h1[@id='CountyName']"
+                tracked = '/html[1]/body[1]/div[2]/div[3]/div[1]/div[1]/div[2]'
+                out = '/html[1]/body[1]/div[2]/div[3]/div[2]/div[1]/div[2]'
+                out_per =  '/html[1]/body[1]/div[2]/div[3]/div[3]/div[1]/div[2]'
+                metrics = [name,tracked, out,out_per ]
+                tosave = []
+                tosave.append(id)
+                for met in metrics:
+                    data = driver.find_element_by_xpath(met).get_attribute("innerHTML")
+                    tosave.append(data)
+                tosave.append((datetime.now()))
+                print(tosave)
+                write_to_csv(tosave)
+                driver.close()
+            i = i+1
+            print(i)
+            time.sleep(60*5)
+        except Exception as e:
+            print(e)
+            main(IDS)
 
-        driver = web.Chrome(executable_path='ECEMasterProject\scripts\chromedriver.exe')
-        driver.get(f'https://poweroutage.us/area/county/{id}')
-
-        name = "//h1[@id='CountyName']"
-        tracked = '/html[1]/body[1]/div[2]/div[3]/div[1]/div[1]/div[2]'
-        out = '/html[1]/body[1]/div[2]/div[3]/div[2]/div[1]/div[2]'
-        out_per =  '/html[1]/body[1]/div[2]/div[3]/div[3]/div[1]/div[2]'
-        metrics = [name,tracked, out,out_per ]
-        tosave = []
-        tosave.append(id)
-        for met in metrics:
-            data = driver.find_element_by_xpath(met).get_attribute("innerHTML")
-            tosave.append(data)
-        tosave.append((datetime.now()))
-        print(tosave)
-        write_to_csv(tosave)
-        driver.close()
+main(IDS)
