@@ -1,7 +1,7 @@
 # ECEMasterProject
 <!-- ## RL Scenario -->
 
-![Visual of a Node Network, 3 nodes, 3 layers connected in pairs](visuals/basicnetwork.drawio.png =450x)
+![Visual of a Node Network, 3 nodes, 3 layers connected in pairs](visuals/basicnetwork.drawio.png)
 
 ## Purpose
 
