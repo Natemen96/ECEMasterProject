@@ -1,14 +1,13 @@
 # ECEMasterProject
 <!-- ## RL Scenario -->
 
-![Visual of a Node Network, 3 nodes, 3 layers connected in pairs](../visuals/basicnetwork.png =450x)
-<!-- ![Visual of a Node Network, 3 nodes, 3 layers connected in pairs](../visuals/basicnetwork.png) -->
+![Visual of a Node Network, 3 nodes, 3 layers connected in pairs](visuals/basicnetwork.drawio.png =450x)
 
 ## Purpose
 
 In situations of natural disasters/phenomenons, blackouts can occur. To combat this, EV (electric vehicles) drivers can use their vehicles as batteries for customers/ clients. To simulate the difficulty of this challenge of getting to as much customers as possible until the blackout period is over, a RL environment was created. This environment will feature random scenarios based on node network size, amount of the houses (can't be larger than node size), blackout data, and housing models.
 
-## Task for agent
+## Task for Agent
 
 Start at "Home" (a node) travel to each location in exchange for energy (main resource for EV),
 unload energy in exchange for energy, travel back to home in exchange for energy. The agent can restore energy at "Home".
