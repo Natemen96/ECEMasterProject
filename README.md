@@ -29,12 +29,16 @@ Episode is over when EV is out of energy or network is completely powered.
         1 - Unload (at cost)
         1 - Recharge (no cost, expect an action)
 
-    n+e+3 States:
+    n+e States:
         n - Statuses of Each Node
-            0 - Blackout
-            1 - Blackout with Solar
-            2 - Powered
-            3 - Home / Charging Station
+            Key - Assignment
+            0 - Buffer
+            1 - Blackout
+            2 - Blackout with Solar
+            3 - Powered
+            4 - Charging Station
+            5 - Home
+
         e - Cost of each edge
             i - Cost of Edge
         
