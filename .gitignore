@@ -1,4 +1,4 @@
-test.*
+test*
 .history
 .vscode
 # Byte-compiled / optimized / DLL files
