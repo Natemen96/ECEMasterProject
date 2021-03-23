@@ -40,9 +40,10 @@ Episode is over when EV is out of energy or network is completely powered.
             5 - Home
 
         e - Cost of each edge
-            i - Cost of Edge
+            <!-- i - Cost of Edge -->
         
-    where n is the number of nodes, e is the number of edges, and i is the cost. 
+    where n is the number of nodes, e is the number of edges
+    <!-- , and i is the cost.  -->
 
 ## Logic
 
