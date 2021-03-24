@@ -1,10 +1,9 @@
 import sys 
 import os
-print(f'Env Path: {os.getcwd()}')
+# print(f'Env Path: {os.getcwd()}')
 
 import networkx as nx
 import matplotlib.pyplot as plt
-import pandas as pd 
 import numpy as np
 import random
 from itertools import combinations, groupby
@@ -39,22 +38,27 @@ def gnp_random_connected_graph(n, p):
     return G
 
 n = 5
-theta = .5
-G = gnp_random_connected_graph(n,theta)
+# G = gnp_random_connected_graph(n,theta)
 
 class graph_env():
-    def __init__(self, G=G,n = n, numofhome = 1, numofblackout = 1, numofblackoutws = 0, numofchargingstation = 0, max_actions = 3, blackout_str = 'Brazoria', agents = [None]):
+    def __init__(self, n = 5, numofhome = 1, numofblackout = 1, numofblackoutws = 0, numofchargingstation = 0, max_actions = 3, blackout_str = 'Brazoria', agents = [None]):
         """Takes in a randomly generated graph, and keeps track of ep infomation
         numofhome - number of homes for agent starting point: int
         numofblackout - number of houses with blackout: int
         numofblackout - number of houses with solarpower: int
         blackout_str - Reads Blackout data from npy file: str
         """
-
+        self.kwags = (n, numofhome, numofblackout, numofblackoutws, numofchargingstation,max_actions,blackout_str, agents  )
+        self.game_over = False
+        self.game_over_reasons = ['All Agents Stuck', 'Power Back', "Week's Over"]
+        self.game_over_reason = None
         assert numofhome == len(agents), "Env Load Error: Number of homes must be equal number of agents"
         # self.ev = ev
         # self.day = 0
         self.agents = agents 
+        print(agents)
+        self.len_agents = blen(agents)
+        
         # self.ep = 0
         self.i = 0
         # self.timestep = 0
@@ -65,14 +69,14 @@ class graph_env():
         self.max_actions = 1 if ((max_actions -1) < -1)  else  max_actions
         self.max_i = self.max_days * self.max_actions
         # self.max_actions = 1 if ((max_actions -1) < -1)  else  max_actions #action limit can't be less than 0
-        self.graph = G
+        # self.graph = G
+        self.graph = self.gnp_random_connected_graph(n=n)
 
         self.color_map = []
         self.size_map = []
 
-
         #get all init graph information 
-        self.allnodes = list(G.nodes())
+        self.allnodes = list(self.graph.nodes())
         self.node_status = dict.fromkeys(self.allnodes,0)
         
 
@@ -85,11 +89,16 @@ class graph_env():
         self.set_cost(n)
         #EVs start at home
         self.EV_locations = copy.deepcopy(self.home_nodes)
-
+        # print(self.home_nodes,self.charging_nodes)
         #give agents info
-        for i,agent in enumerate(agents):
-            agent.set_charging_locations(self.home_nodes + self.charging_nodes)
-            agent.set_ev_locations(self.EV_locations[i])
+        self.get_available_action()
+        for i,agent in enumerate(self.agents):
+            if self.charging_nodes == [None]:
+                agent.set_charging_locations(self.home_nodes)
+            else:
+                agent.set_charging_locations(self.home_nodes + self.charging_nodes)
+            agent.set_ev_location(self.EV_locations[i])
+            agent.set_available_actions(self.actions[i])
         #delete None dict 
         try:
             del self.node_status[None]
@@ -101,24 +110,62 @@ class graph_env():
         except OSError: 
             print (f'Could not open/read file: {PATH+blackout_str+".npy"}')
         self.get_power_samples(blackout_data, self.max_i)
-        print('Env loaded correctly')
+        print('Env loaded correctly, Simulation started')
     
     def step(self, ev_loc = None ,action = None):
-
+        if self.game_over == True:
+            self.env_close()
+            return 
+        print()
+        print('Env Step')
+        print(ev_loc)
+        print(action)
         len_max_buffer = blen(self.buffer_nodes)+blen(self.blackws_nodes)+blen(self.black_nodes)
         # print(len_max_buffer)
-        if self.i == self.max_i or blen(self.buffer_nodes) == len_max_buffer:
+        if self.i == self.max_i:
+            self.game_over_reason = self.game_over_reasons[2]
             self.env_close()
+            return
+            
+        if blen(self.buffer_nodes) == len_max_buffer:
+            self.game_over_reason = self.game_over_reasons[1]
+            self.env_close()
+            return 
+            
         else: 
+            stuck_agents = []
+
             
-            
-            self.get_available_action()
             #give each agent it's available actions 
+                # stuck_agent = []
+                # if agent.dead_battery == False:
+                # agent.set_ev_location(self.EV_locations[i])
             for i,agent in enumerate(self.agents):
-                agent.set_ev_locations(self.EV_locations[i])
+                #give them to agents
+                agent.set_available_actions(self.actions[i])
+            
+
+            if blen(stuck_agents) == self.len_agents:
+                self.game_over_reason = self.game_over_reasons[0]
+                self.env_close()
+                return
+                
+
+            self.update_ev_location(ev_loc,action)
+            for i,agent in enumerate(self.agents):
+                if agent.dead_battery == False:
+                    #set location for EV
+                    agent.set_ev_location(self.EV_locations[i])
+                else:
+                    stuck_agents.append(agent)
+
+            #get current actions for new locations
+            self.get_available_action()
+
+            for i,agent in enumerate(self.agents):
+                #give them to agents
                 agent.set_available_actions(self.actions[i])
 
-            # self.update_ev_location(self, ev_loc,action)
             self.power_check()
             # 
 
@@ -131,8 +178,13 @@ class graph_env():
         self.i = 0
     
     def env_close(self):
-        print(f'Ep {self.eps} over, please reinit')
-        self.eps += 1
+        print(f'Game over: {self.game_over_reason}, please reinit')
+        #TODO: give out reward
+        #TODO: figure out how to auto reinit 
+        self.game_over = True
+        self.__init__(*self.kwags)
+        # for i,agent in enumerate(self.agents):
+    
 
     def get_available_action(self):
 
@@ -140,6 +192,7 @@ class graph_env():
             it = iter(a)
             res_dct = dict(zip(it, it))
             return res_dct
+
         actions = [] # a list of all actions per agent
         for ev in self.EV_locations:
             act_weights = []
@@ -215,7 +268,7 @@ class graph_env():
         self.blackout_samples = []
         totalsamples = len(blackout_data)
         for i in range(numofsample): 
-            idx = (i//numofsample)*totalsamples
+            idx = int((i/numofsample)*totalsamples)
             self.blackout_samples.append(blackout_data[idx])
 
     def power_check(self):
@@ -226,11 +279,12 @@ class graph_env():
         for node in self.black_nodes:
             if node == None:
                 pass
-            elif random.random() < p:
+            elif random.random() /2 < p:
                 pass
             else: 
                 #put power back on
                 node_update = {node: 3}
+                print(f'Power restored to node {node}')
                 self.node_status.update(node_update)
                 self.black_nodes.remove(node)
                 self.buffer_nodes.append(node)
@@ -238,11 +292,12 @@ class graph_env():
         for node in self.blackws_nodes:
             if node == None:
                 pass
-            elif random.random() < p:
+            elif random.random() /2 < p:
                 pass
             else: 
                 #put power back on
                 node_update = {node: 3}
+                print(f'Power restored to node {node}')
                 self.node_status.update(node_update)
                 self.blackws_nodes.remove(node)
                 self.buffer_nodes.append(node)
@@ -255,23 +310,36 @@ class graph_env():
 
     def update_ev_location(self, ev_loc=None,ev_update = None):
         "ev_update (move up) - edge: (s,t), ev - node: s"
-
-        if ev_loc == None: 
-            ev_loc = self.EV_locations[0]
-        ev_index = self.EV_locations.index(ev_loc)
-        if ev_update == None:
-            routes = self.graph.edges(ev_loc)
-            ev_update = random.sample(list(routes), 1)[0]
-        
-        # print(ev)
-        # print(f'new location: {ev_update}')
-        # print(f'EV_index: {ev_index}')
-        if ev_loc == ev_update[0]:
-            new_ev_loc = ev_update[1]
-        else: 
-            new_ev_loc = ev_update[0]
-        print(f'new location: {new_ev_loc}')
-        self.EV_locations[ev_index] = new_ev_loc
+        if ev_update == "nothing":
+            pass 
+        else:
+            #if None do for demo
+            if ev_loc == None and ev_update == None:
+                if ev_loc == None: 
+                    ev_loc = self.EV_locations[0]
+                ev_index = self.EV_locations.index(ev_loc)
+                if ev_update == None:
+                    routes = self.graph.edges(ev_loc)
+                    ev_update = random.sample(list(routes), 1)[0]
+                
+                # print(ev)
+                # print(f'new location: {ev_update}')
+                # print(f'EV_index: {ev_index}')
+                if ev_loc == ev_update[0]:
+                    new_ev_loc = ev_update[1]
+                else: 
+                    new_ev_loc = ev_update[0]
+                print(f'new location: {new_ev_loc}')
+                self.EV_locations[ev_index] = new_ev_loc
+            else:
+                # print(type(ev))
+                ev_index = self.EV_locations.index(ev_loc)
+                if ev_loc == ev_update[0][0]:
+                    new_ev_loc = ev_update[0][1]
+                else: 
+                    new_ev_loc = ev_update[0][0]
+                print(f'new location: {new_ev_loc}')
+                self.EV_locations[ev_index] = new_ev_loc
     
     def plot_nodes(self, update = True):
         if update == True: 
@@ -326,11 +394,31 @@ class graph_env():
         else:       
             pass
         nx.draw(self.graph, node_color=self.color_map, node_size = self.size_map, with_labels=True)
-        
+    
+    def gnp_random_connected_graph(self, n, p = .5):
+        """ 
+        Generates a random undirected graph, similarly to an Erdős-Rényi 
+        graph, but enforcing that the resulting graph is conneted 
+        """
+        edges = combinations(range(n), 2)
+        G = nx.Graph()
+        G.add_nodes_from(range(n))
+        if p <= 0:
+            return G
+        if p >= 1:
+            return nx.complete_graph(n, create_using=G)
+        for _, node_edges in groupby(edges, key=lambda x: x[0]):
+            node_edges = list(node_edges)
+            random_edge = random.choice(node_edges)
+            G.add_edge(*random_edge)
+            for e in node_edges:
+                if random.random() < p:
+                    G.add_edge(*e)
+        return G
 
 
 if __name__ == "__main__":
-    env = graph_env(G,n)
+    env = graph_env(n)
     # env.get_available_action()
     env.step()
     # print(env.actions)

@@ -7,7 +7,7 @@ import random
 print()
 print(f'Agent Path: {os.getcwd()}')
 
-PATH = '../Demo/ECEMasterProject/RL/agent/'
+# PATH = '../Demo/ECEMasterProject/RL/agent/'
   # print(nissan_leaf)
 
 
@@ -20,12 +20,13 @@ class BasicAgent():
     self.avg_energy_com = float(car['avg_energy_consumption(kWh/mile)'])
     self.MAX_BATTERY = float(car['battery_capacity(kWh)'])
     self.current_battery = float(car['battery_capacity(kWh)']) #assuming tank is full at start
+    self.dead_battery = False 
     print(f'Data Load Successfully for {self.make} - {self.model} - {self.year}')
     # print(self.current_battery)
     # print(self.MAX_BATTERY)
     self.basic_actions = ("chargeup","unload")
     pass
-  
+    self.ev_loc = None
   def step(self, obs=None):
     #return an action, use obs to help 
     pass
@@ -35,8 +36,8 @@ class BasicAgent():
     # print(env_actions)
     self.env_node_actions_cost = env_actions.popitem()
     #  = env_actions
-    print(self.env_edge_actions_cost)
-    print(self.env_node_actions_cost)
+    # print(self.env_edge_actions_cost)
+    # print(self.env_node_actions_cost)
 
 
   
@@ -54,51 +55,75 @@ class BasicAgent():
 
   def do_action(self, action):
     "expect edges or current node"
-    if type(action) == type(tuple):
-      self.movement(self.env_actions[action])
+    print(type(action))
+    print(action)
+    if type(action) == tuple:
+      self.movement(action[1])
       return action
     else:
       getattr(self, action)(self.env_node_actions_cost[1])
-      return None
+      return "nothing"
 
   
   # def set_home_location(self, home_location):
   #   self.home_loc = home_location
+  # def black_out_target(self, black_loc):
+  #   self.black_loc = black_loc
 
   def set_ev_location(self, ev_location):
     self.ev_loc = ev_location
 
   def set_charging_locations(self, charging_locations):
+    # charging_locations = list(filter(None, charging_locations))
     self.charging_locations = charging_locations
 
-  def chargeup(self, cost = 0):
+  def chargeup(self, cost = 0, flag = False):
     #check charge
-    if self.ev_loc in self.charging_locations:
+    if (self.ev_loc in self.charging_locations) or flag:
       self.current_battery = float(self.MAX_BATTERY)
     else:
       pass
 
   def unload(self,cost):
+    # print(self.current_battery)
+    # if (self.ev_loc in self.black_loc):
+    #   self.current_battery -= cost 
+    # else:
     self.current_battery -= cost
-    pass 
+    # print(self.current_battery)
+
   
   def movement(self, cost):
      self.unload(cost)
 
   def reset(self):
-    self.chargeup()
+    self.chargeup(flag=True)
+
+  def dead_battery_check(self):
+    if self.current_battery < 0:
+      self.dead_battery = True
+    else:
+      pass 
     # print(self.current_battery)
 
 class RandomAgent(BasicAgent):
   def __init__(self, car):
     super().__init__(car)
+    self.last_action = 'nothing'
 
-  def step(self, env_actions,obs=None):
+  def step(self, obs=None):
     # super().step(obs)
-    actions = self.get_available_actions(env_actions)
+    print()
+    print('Agent Step')
+    actions = self.get_available_actions()
     action = random.choice(actions)
-    self.do_action(action)
-    # return action
+    
+    self.dead_battery_check()
+    if self.dead_battery == True:
+      return self.ev_loc, "nothing"
+    
+    self.last_action = self.do_action(action)
+    return self.ev_loc, self.last_action
 
 
 if __name__ == "__main__":

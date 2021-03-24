@@ -4,11 +4,13 @@ import os
 import random 
 import time 
 
+import matplotlib.pyplot as plt
+
 import rl_env.rl_path_ev as env
 import agent.agent as agents
 
-print()
-print(f'Main Path: {os.getcwd()}')
+# print()
+# print(f'Main Path: {os.getcwd()}')
 
 PATH = '../Demo/ECEMasterProject/RL/agent/'
 
@@ -47,4 +49,11 @@ if __name__ == "__main__":
     car_agent = agents.RandomAgent(nissan_leaf)
 
     network_env = env.graph_env(agents= [car_agent])
-    network_env.step()
+    # network_env.step()
+    # print(car_agent.step())
+    for i in range(24):
+        network_env.plot_nodes()
+        plt.pause(2)
+        plt.close()
+        network_env.step(*car_agent.step())
+    # car_agent.step()
