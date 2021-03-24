@@ -62,7 +62,7 @@ class BasicAgent():
       return action
     else:
       getattr(self, action)(self.env_node_actions_cost[1])
-      return "nothing"
+      return action
 
   
   # def set_home_location(self, home_location):
@@ -78,7 +78,7 @@ class BasicAgent():
     self.charging_locations = charging_locations
 
   def chargeup(self, cost = 0, flag = False):
-    #check charge
+    #check charge 
     if (self.ev_loc in self.charging_locations) or flag:
       self.current_battery = float(self.MAX_BATTERY)
     else:
@@ -94,9 +94,12 @@ class BasicAgent():
 
   
   def movement(self, cost):
-     self.unload(cost)
+    "assuming cost is in miles"
+    cost = self.avg_energy_com*cost
+    self.unload(cost)
 
   def reset(self):
+    self.dead_battery = False 
     self.chargeup(flag=True)
 
   def dead_battery_check(self):
@@ -117,22 +120,22 @@ class RandomAgent(BasicAgent):
     print('Agent Step')
     actions = self.get_available_actions()
     action = random.choice(actions)
-    
+        
+    self.last_action = self.do_action(action)
     self.dead_battery_check()
     if self.dead_battery == True:
-      return self.ev_loc, "nothing"
-    
-    self.last_action = self.do_action(action)
+      self.last_action = 'nothing'
+      # return self.ev_loc, "nothing"
     return self.ev_loc, self.last_action
 
 
 if __name__ == "__main__":
-  with open(PATH+'nissan_leaf_2017.json') as f:
-    nissan_leaf = json.load(f)
-    # print(nissan_leaf)
-    # car_agent = BasicAgent(nissan_leaf)
-    car_agent = RandomAgent(nissan_leaf)
-    # print(car_agent.avg_energy_com, car_agent.battery)
-    car_agent.reset()
-    # print(car_agent.current_battery)
+  # with open(PATH+'nissan_leaf_2017.json') as f:
+  #   nissan_leaf = json.load(f)
+  #   # print(nissan_leaf)
+  #   # car_agent = BasicAgent(nissan_leaf)
+  #   car_agent = RandomAgent(nissan_leaf)
+  #   # print(car_agent.avg_energy_com, car_agent.battery)
+  #   car_agent.reset()
+  #   # print(car_agent.current_battery)
   pass

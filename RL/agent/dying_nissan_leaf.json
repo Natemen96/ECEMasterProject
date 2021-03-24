@@ -1,0 +1,8 @@
+{
+    "model": "leaf",
+    "make": "nissan",
+    "year": "2017",
+    "avg_energy_consumption(kWh/mile)": ".5",
+    "battery_capacity(kWh)": "1",
+    "source": ""
+}

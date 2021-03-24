@@ -44,6 +44,8 @@ def run_loop(agents, env, max_episodes=0):
 if __name__ == "__main__":
 
   with open(PATH+'nissan_leaf_2017.json') as f:
+#   with open(PATH+'nissan_leaf_2019.json') as f:
+#   with open(PATH+'dying_nissan_leaf.json') as f:
     nissan_leaf = json.load(f)
 
     car_agent = agents.RandomAgent(nissan_leaf)
@@ -52,8 +54,9 @@ if __name__ == "__main__":
     # network_env.step()
     # print(car_agent.step())
     for i in range(24):
-        network_env.plot_nodes()
-        plt.pause(2)
-        plt.close()
+        # network_env.plot_nodes()
+        # plt.pause(2)
+        # plt.close()
         network_env.step(*car_agent.step())
+        #obs = network_env.step(*car_agent.step(obs))
     # car_agent.step()

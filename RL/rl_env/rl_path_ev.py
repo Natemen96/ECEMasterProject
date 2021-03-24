@@ -99,6 +99,7 @@ class graph_env():
                 agent.set_charging_locations(self.home_nodes + self.charging_nodes)
             agent.set_ev_location(self.EV_locations[i])
             agent.set_available_actions(self.actions[i])
+            agent.reset()
         #delete None dict 
         try:
             del self.node_status[None]
@@ -143,13 +144,6 @@ class graph_env():
             for i,agent in enumerate(self.agents):
                 #give them to agents
                 agent.set_available_actions(self.actions[i])
-            
-
-            if blen(stuck_agents) == self.len_agents:
-                self.game_over_reason = self.game_over_reasons[0]
-                self.env_close()
-                return
-                
 
             self.update_ev_location(ev_loc,action)
             for i,agent in enumerate(self.agents):
@@ -158,6 +152,11 @@ class graph_env():
                     agent.set_ev_location(self.EV_locations[i])
                 else:
                     stuck_agents.append(agent)
+
+            if blen(stuck_agents) == self.len_agents:
+                self.game_over_reason = self.game_over_reasons[0]
+                self.env_close()
+                return
 
             #get current actions for new locations
             self.get_available_action()
@@ -173,16 +172,16 @@ class graph_env():
             
         # return self.ev_for_agents()
     def reset(self):
-        #TODO: reload almost everything in __init__
-        # self.eps +=1 
-        self.i = 0
+        return self.env_close()
     
     def env_close(self):
         print(f'Game over: {self.game_over_reason}, please reinit')
         #TODO: give out reward
-        #TODO: figure out how to auto reinit 
+        print(f'Game ended in {self.i} out of {self.max_i} steps')
+        self.i = 0
         self.game_over = True
         self.__init__(*self.kwags)
+        # return obs
         # for i,agent in enumerate(self.agents):
     
 
@@ -205,10 +204,6 @@ class graph_env():
             # print(edges) 
             #add the node for node actions
             act_weights.append(ev)
-            #TODO: set blackout nodes costs
-            # print(self.graph.nodes[ev])
-            # print(ev)
-            # node_weight= self.graph.nodes[ev]["cost"](data="cost", default=0)
             node_weight= self.graph.nodes[ev]["cost"]
             act_weights.append(node_weight)
 
@@ -310,7 +305,7 @@ class graph_env():
 
     def update_ev_location(self, ev_loc=None,ev_update = None):
         "ev_update (move up) - edge: (s,t), ev - node: s"
-        if ev_update == "nothing":
+        if ev_update in ["nothing","chargeup","unload"]:
             pass 
         else:
             #if None do for demo
