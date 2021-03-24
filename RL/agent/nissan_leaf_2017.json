@@ -1,0 +1,8 @@
+{
+    "model": "leaf",
+    "make": "nissan",
+    "year": "2019",
+    "avg_energy_consumption(kWh/mile)": ".27",
+    "battery_capacity(kWh)": "40",
+    "source": "https://www.ultimatespecs.com/car-specs/Nissan/113234/Nissan-Leaf-2-40kWh.html"
+}
