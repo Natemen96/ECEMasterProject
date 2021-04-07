@@ -16,29 +16,30 @@ def blen(lst):
     "Better len for list, doesn't count Nones"
     return sum(x is not None for x in lst)
 
-def gnp_random_connected_graph(n, p):
-    """
-    Generates a random undirected graph, similarly to an Erdős-Rényi 
-    graph, but enforcing that the resulting graph is conneted
-    """
-    edges = combinations(range(n), 2)
-    G = nx.Graph()
-    G.add_nodes_from(range(n))
-    if p <= 0:
-        return G
-    if p >= 1:
-        return nx.complete_graph(n, create_using=G)
-    for _, node_edges in groupby(edges, key=lambda x: x[0]):
-        node_edges = list(node_edges)
-        random_edge = random.choice(node_edges)
-        G.add_edge(*random_edge)
-        for e in node_edges:
-            if random.random() < p:
-                G.add_edge(*e)
-    return G
+class Observation():
+    def __init__(self):
+        self.obs = None 
+        self.reward = 0 
+        self.last = False
+        
+    def set_obs(self, obs):
+        self.obs = obs 
+        
+    def get_obs(self):
+        return self.obs 
 
-n = 5
-# G = gnp_random_connected_graph(n,theta)
+    def set_reward(self, reward):
+        self.reward = reward 
+        
+    def get_reward(self):
+        return self.reward
+
+    def set_last(self,last_flag):
+        self.last = last_flag
+        
+    def get_last(self):
+        return self.last 
+
 
 class graph_env():
     def __init__(self, n = 5, numofhome = 1, numofblackout = 1, numofblackoutws = 0, numofchargingstation = 0, max_actions = 3, blackout_str = 'Brazoria', agents = [None]):
@@ -48,7 +49,7 @@ class graph_env():
         numofblackout - number of houses with solarpower: int
         blackout_str - Reads Blackout data from npy file: str
         """
-        self.kwags = (n, numofhome, numofblackout, numofblackoutws, numofchargingstation,max_actions,blackout_str, agents  )
+        self.kwags = (n, numofhome, numofblackout, numofblackoutws, numofchargingstation,max_actions,blackout_str, agents)
         self.game_over = False
         self.game_over_reasons = ['All Agents Stuck', 'Power Back', "Week's Over"]
         self.game_over_reason = None
@@ -56,7 +57,7 @@ class graph_env():
         # self.ev = ev
         # self.day = 0
         self.agents = agents 
-        print(agents)
+        # print(agents)
         self.len_agents = blen(agents)
         
         # self.ep = 0
@@ -92,6 +93,7 @@ class graph_env():
         # print(self.home_nodes,self.charging_nodes)
         #give agents info
         self.get_available_action()
+        self.agents_obs = []
         for i,agent in enumerate(self.agents):
             if self.charging_nodes == [None]:
                 agent.set_charging_locations(self.home_nodes)
@@ -99,7 +101,12 @@ class graph_env():
                 agent.set_charging_locations(self.home_nodes + self.charging_nodes)
             agent.set_ev_location(self.EV_locations[i])
             agent.set_available_actions(self.actions[i])
+            agent.set_all_loc(self.allnodes)
+            # agent.set_qtable_actions()
+            obs = Observation()
+            self.agents_obs.append(obs)
             agent.reset()
+
         #delete None dict 
         try:
             del self.node_status[None]
@@ -111,36 +118,36 @@ class graph_env():
         except OSError: 
             print (f'Could not open/read file: {PATH+blackout_str+".npy"}')
         self.get_power_samples(blackout_data, self.max_i)
+        
+        # for i,obs in enumerate(self.agents_obs):
+        #     #update obs
+        #     obs.set_obs(tuple(self.get_obs(self.EV_locations[i])))
+        #     if obs.get_last():
+        #         obs.set_last(False)
+
         print('Env loaded correctly, Simulation started')
     
     def step(self, ev_loc = None ,action = None):
         if self.game_over == True:
-            self.env_close()
-            return 
-        print()
-        print('Env Step')
-        print(ev_loc)
-        print(action)
+            return self.env_close() 
+        # print()
+        # print('Env Step')
+        # print(ev_loc)
+        # print(action)
         len_max_buffer = blen(self.buffer_nodes)+blen(self.blackws_nodes)+blen(self.black_nodes)
         # print(len_max_buffer)
         if self.i == self.max_i:
             self.game_over_reason = self.game_over_reasons[2]
-            self.env_close()
-            return
+            return self.env_close()
             
-        if blen(self.buffer_nodes) == len_max_buffer:
+        elif blen(self.buffer_nodes) == len_max_buffer:
             self.game_over_reason = self.game_over_reasons[1]
-            self.env_close()
-            return 
+            return self.env_close()
             
         else: 
+            #TODO: Reduce this to a function?
             stuck_agents = []
 
-            
-            #give each agent it's available actions 
-                # stuck_agent = []
-                # if agent.dead_battery == False:
-                # agent.set_ev_location(self.EV_locations[i])
             for i,agent in enumerate(self.agents):
                 #give them to agents
                 agent.set_available_actions(self.actions[i])
@@ -154,9 +161,9 @@ class graph_env():
                     stuck_agents.append(agent)
 
             if blen(stuck_agents) == self.len_agents:
+                #TODO: make sure this is working 
                 self.game_over_reason = self.game_over_reasons[0]
-                self.env_close()
-                return
+                return self.env_close()
 
             #get current actions for new locations
             self.get_available_action()
@@ -165,12 +172,29 @@ class graph_env():
                 #give them to agents
                 agent.set_available_actions(self.actions[i])
 
-            self.power_check()
-            # 
+            self.power_check() 
 
             self.i +=1 
+
+            for i,obs in enumerate(self.agents_obs):
+                #update obs
+                obs.set_obs(tuple(self.get_obs(self.EV_locations[i])))
+                if obs.get_last():
+                    obs.set_last(False)
+            return self.agents_obs
+
+    
+
+    def get_obs(self, node):
+        obs = []
+        len_path = dict(nx.all_pairs_dijkstra(self.graph,weight='cost'))
+        for key, val in self.node_status.items():
+            #get vals which hold status of each nodes 
+            obs.append(val)
+            #get cost to node from agent_loc 
+            obs.append(len_path[node][0][key])
+        return obs
             
-        # return self.ev_for_agents()
     def reset(self):
         return self.env_close()
     
@@ -181,6 +205,13 @@ class graph_env():
         self.i = 0
         self.game_over = True
         self.__init__(*self.kwags)
+
+        for i,obs in enumerate(self.agents_obs):
+            #update obs
+            obs.set_obs(tuple(self.get_obs(self.EV_locations[i])))
+            obs.set_last(True)
+
+        return self.agents_obs
         # return obs
         # for i,agent in enumerate(self.agents):
     
@@ -211,10 +242,6 @@ class graph_env():
         self.actions = actions
         # pass
 
-    def get_derived_obs(self):
-        #"TODO: gets obs like each node status, and cost of each edge"
-        #make into obs class? 
-        pass 
     def reward_output(self):
         "TODO: figure out reward for actions / obs"
         pass
@@ -324,7 +351,7 @@ class graph_env():
                     new_ev_loc = ev_update[1]
                 else: 
                     new_ev_loc = ev_update[0]
-                print(f'new location: {new_ev_loc}')
+                # print(f'new location: {new_ev_loc}')
                 self.EV_locations[ev_index] = new_ev_loc
             else:
                 # print(type(ev))
@@ -333,7 +360,7 @@ class graph_env():
                     new_ev_loc = ev_update[0][1]
                 else: 
                     new_ev_loc = ev_update[0][0]
-                print(f'new location: {new_ev_loc}')
+                # print(f'new location: {new_ev_loc}')
                 self.EV_locations[ev_index] = new_ev_loc
     
     def plot_nodes(self, update = True):
@@ -413,6 +440,7 @@ class graph_env():
 
 
 if __name__ == "__main__":
+    n = 5 
     env = graph_env(n)
     # env.get_available_action()
     env.step()

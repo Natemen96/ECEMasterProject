@@ -14,6 +14,8 @@ import agent.agent as agents
 
 PATH = '../Demo/ECEMasterProject/RL/agent/'
 
+MODEL_PATH = '../Demo/ECEMasterProject/models/Qtables/'
+
 def run_loop(agents, env, max_episodes=0):
   """A run loop to have agents and an environment interact."""
   total_frames = 0
@@ -45,18 +47,26 @@ if __name__ == "__main__":
 
   with open(PATH+'nissan_leaf_2017.json') as f:
 #   with open(PATH+'nissan_leaf_2019.json') as f:
-#   with open(PATH+'dying_nissan_leaf.json') as f:
+  # with open(PATH+'dying_nissan_leaf.json') as f:
     nissan_leaf = json.load(f)
 
-    car_agent = agents.RandomAgent(nissan_leaf)
+    # car_agent = agents.RandomAgent(nissan_leaf)
+    car_agent = agents.SmartQLAgent(nissan_leaf)
 
     network_env = env.graph_env(agents= [car_agent])
-    # network_env.step()
-    # print(car_agent.step())
-    for i in range(24):
+    obs = network_env.reset()
+    #init table
+    car_agent.create_qtable()
+    n = 1000
+    for i in range(n):
+        #uncomment to turn on visual, TODO: (Low) Make into function?
         # network_env.plot_nodes()
-        # plt.pause(2)
+        # plt.pause(4)
         # plt.close()
-        network_env.step(*car_agent.step())
-        #obs = network_env.step(*car_agent.step(obs))
-    # car_agent.step()
+        # network_env.step(*car_agent.step())
+        # print()
+        # print(obs)
+        obs = network_env.step(*car_agent.step(obs[0]))
+        # print(obs)
+
+    car_agent.qtable.save_qtable(n, MODEL_PATH)

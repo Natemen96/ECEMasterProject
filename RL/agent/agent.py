@@ -1,7 +1,8 @@
 import json
 import os 
 import random 
-
+# from algos.QL import QLearningTable
+from agent.algos.QL import QLearningTable
 # sys.path.append('/ECEMasterProject/RL/rl_env')
 # import rl_path_ev 
 print()
@@ -9,6 +10,7 @@ print(f'Agent Path: {os.getcwd()}')
 
 # PATH = '../Demo/ECEMasterProject/RL/agent/'
   # print(nissan_leaf)
+
 
 
 class BasicAgent():
@@ -25,11 +27,23 @@ class BasicAgent():
     # print(self.current_battery)
     # print(self.MAX_BATTERY)
     self.basic_actions = ("chargeup","unload")
-    pass
     self.ev_loc = None
+    self.ep = -1
+
   def step(self, obs=None):
     #return an action, use obs to help 
     pass
+
+  def set_all_loc(self,nodes):
+    self.all_loc = nodes
+
+  def get_qtable_actions(self):
+    qtable_actions = ['nothing']
+    for act in self.basic_actions:
+      qtable_actions.append(act)
+    for node in self.all_loc:
+      qtable_actions.append(node)
+    return qtable_actions
 
   def set_available_actions(self,env_actions):
     self.env_edge_actions_cost = env_actions
@@ -38,15 +52,13 @@ class BasicAgent():
     #  = env_actions
     # print(self.env_edge_actions_cost)
     # print(self.env_node_actions_cost)
-
-
   
 
   def get_available_actions(self):
     actions = []
     for act in self.basic_actions:
       actions.append(act)
-
+    # self.qtable_actions = actions
     for act in self.env_edge_actions_cost.items():
       actions.append(act)
     return actions
@@ -55,12 +67,13 @@ class BasicAgent():
 
   def do_action(self, action):
     "expect edges or current node"
-    print(type(action))
-    print(action)
+    # print(type(action))
+    # print(action)
     if type(action) == tuple:
       self.movement(action[1])
       return action
     else:
+      #pass node cost if there is any
       getattr(self, action)(self.env_node_actions_cost[1])
       return action
 
@@ -92,7 +105,9 @@ class BasicAgent():
     self.current_battery -= cost
     # print(self.current_battery)
 
-  
+  def nothing(self, cost):
+    pass 
+
   def movement(self, cost):
     "assuming cost is in miles"
     cost = self.avg_energy_com*cost
@@ -101,12 +116,14 @@ class BasicAgent():
   def reset(self):
     self.dead_battery = False 
     self.chargeup(flag=True)
+    self.ep +=1
+    self.last_action = None
+    self.previous_state = None
+    print(f'Current ep {self.ep}')
 
   def dead_battery_check(self):
     if self.current_battery < 0:
       self.dead_battery = True
-    else:
-      pass 
     # print(self.current_battery)
 
 class RandomAgent(BasicAgent):
@@ -116,8 +133,8 @@ class RandomAgent(BasicAgent):
 
   def step(self, obs=None):
     # super().step(obs)
-    print()
-    print('Agent Step')
+    # print()
+    # print('Agent Step')
     actions = self.get_available_actions()
     action = random.choice(actions)
         
@@ -127,6 +144,56 @@ class RandomAgent(BasicAgent):
       self.last_action = 'nothing'
       # return self.ev_loc, "nothing"
     return self.ev_loc, self.last_action
+
+class SmartQLAgent(BasicAgent):
+  def __init__(self, car):
+    super().__init__(car)
+    self.last_action = None
+    self.previous_state = None
+    
+    
+
+  def step(self, obs):
+    # super().step(obs)
+    # print()
+    # print('Agent Step')
+    state = str(obs.get_obs()) 
+    actions = self.get_available_actions()
+    
+    action = self.qtable.choose_action(state,self.ep)
+    if action not in (actions + ['nothing']):
+        action = int(action)
+    # action = random.choice(actions)
+    def select_action(action, actions_list):
+      if action in actions_list:
+        return action
+      elif action == actions_list[-1][0][0]:
+        return 'nothing'
+      else:
+        for i in range(2,len(actions_list)):
+          if actions_list[i][0][1] == action:
+            return actions_list[i] 
+        return 'nothing'
+
+    action_comd = select_action(action, actions)
+    action_comd = self.do_action(action_comd)
+    self.dead_battery_check()
+    if self.dead_battery == True:
+      action_comd = 'nothing'
+      action = 'nothing'
+    if self.last_action is not None:
+        self.qtable.learn(self.previous_state,
+                        self.last_action,
+                        obs.get_reward(), #need this
+                        'last' if obs.get_last() else state)
+
+    self.last_action = action
+    self.previous_state = state
+      # return self.ev_loc, "nothing"
+    return self.ev_loc, action_comd
+
+  def create_qtable(self):
+    self.qtable = QLearningTable(self.get_qtable_actions())
 
 
 if __name__ == "__main__":
