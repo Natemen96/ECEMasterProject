@@ -27,6 +27,9 @@ class Observation():
         
     def get_obs(self):
         return self.obs 
+    
+    def add_reward(self,reward):
+        self.reward += reward
 
     def set_reward(self, reward):
         self.reward = reward 
@@ -100,6 +103,7 @@ class graph_env():
             else:
                 agent.set_charging_locations(self.home_nodes + self.charging_nodes)
             agent.set_ev_location(self.EV_locations[i])
+            agent.set_black_out_targets(self.blackws_nodes + self.black_nodes)
             agent.set_available_actions(self.actions[i])
             agent.set_all_loc(self.allnodes)
             # agent.set_qtable_actions()
@@ -192,7 +196,7 @@ class graph_env():
             #get vals which hold status of each nodes 
             obs.append(val)
             #get cost to node from agent_loc 
-            obs.append(len_path[node][0][key])
+            obs.append(round( len_path[node][0][key],1))
         return obs
             
     def reset(self):
@@ -267,7 +271,7 @@ class graph_env():
 
     def set_cost(self,n):
         #TODO: reads from model not random 
-        a = np.round(np.random.rand(n,n)[np.triu_indices(n)],3)
+        a = np.round(np.random.rand(n,n)[np.triu_indices(n)],1)
         
         for i,e in enumerate(self.graph.edges()):
             self.graph[e[0]][e[1]]["cost"] = a[i]

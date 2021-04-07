@@ -24,12 +24,12 @@ Episode is over when EV is out of energy or network is completely powered.
 
     Each Agent will have 3 actions per "Day" and a limit of 8 days max.
 
-    10 Actions:
-        8 - Move (at Cost): Left, Right, Up, Down, etc
+    n+2 Actions:
+        n - Move (at Cost) to Node if possible
         1 - Unload (at cost)
         1 - Recharge (no cost, expect an action)
 
-    n+e States:
+    2n+1 States:
         n - Statuses of Each Node
             Key - Assignment
             0 - Buffer
@@ -39,8 +39,9 @@ Episode is over when EV is out of energy or network is completely powered.
             4 - Charging Station
             5 - Home
 
-        e - Cost of each edge
-            <!-- i - Cost of Edge -->
+        n - Cost of each edge
+        
+        1 - Charge State 
         
     where n is the number of nodes, e is the number of edges
     <!-- , and i is the cost.  -->

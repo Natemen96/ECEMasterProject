@@ -46,7 +46,7 @@ def run_loop(agents, env, max_episodes=0):
 if __name__ == "__main__":
 
   with open(PATH+'nissan_leaf_2017.json') as f:
-#   with open(PATH+'nissan_leaf_2019.json') as f:
+  # with open(PATH+'nissan_leaf_2019.json') as f:
   # with open(PATH+'dying_nissan_leaf.json') as f:
     nissan_leaf = json.load(f)
 
@@ -58,6 +58,7 @@ if __name__ == "__main__":
     #init table
     car_agent.create_qtable()
     n = 1000
+    tic = time()
     for i in range(n):
         #uncomment to turn on visual, TODO: (Low) Make into function?
         # network_env.plot_nodes()
@@ -68,5 +69,7 @@ if __name__ == "__main__":
         # print(obs)
         obs = network_env.step(*car_agent.step(obs[0]))
         # print(obs)
-
-    car_agent.qtable.save_qtable(n, MODEL_PATH)
+    toc = time()
+    tictoc = toc - tic 
+    print(f'This took {tictoc:.2f} secs')
+    # car_agent.qtable.save_qtable(n, MODEL_PATH)
