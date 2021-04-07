@@ -165,7 +165,6 @@ class graph_env():
                     stuck_agents.append(agent)
 
             if blen(stuck_agents) == self.len_agents:
-                #TODO: make sure this is working 
                 self.game_over_reason = self.game_over_reasons[0]
                 return self.env_close()
 
@@ -197,6 +196,7 @@ class graph_env():
             obs.append(val)
             #get cost to node from agent_loc 
             obs.append(round( len_path[node][0][key],1))
+        obs.append(tuple(self.graph.edges(node)))
         return obs
             
     def reset(self):
@@ -204,7 +204,6 @@ class graph_env():
     
     def env_close(self):
         print(f'Game over: {self.game_over_reason}, please reinit')
-        #TODO: give out reward
         print(f'Game ended in {self.i} out of {self.max_i} steps')
         self.i = 0
         self.game_over = True
@@ -371,6 +370,7 @@ class graph_env():
         if update == True: 
             self.color_map = []
             self.size_map = []
+            self.label_map = {}
             # self.shape_map = []
             # print(f'current locations: {self.EV_locations}')
             for key, val in self.node_status.items():
@@ -388,26 +388,35 @@ class graph_env():
                 else:
                     self.color_map.append('blue')
 
-                if key in self.EV_locations:
+                if key in (self.EV_locations):
                     # print(f'current location: {key}')
                     self.size_map.append(1000)
+                    idx = self.EV_locations.index(key)
+                    # self.label_map.append(key)
+                    # self.label_map.append(self.agents[idx].current_battery)
+                    self.label_map[key] = f'Current Charge {(round(self.agents[idx].current_battery,2))}/{(self.agents[idx].MAX_BATTERY)}' 
                 else:
                     self.size_map.append(300)
+                    # self.label_map.append(key)
+                    # self.label_map.append(" ")
+                    self.label_map[key] = " "
 
         else:       
             pass
 
-        
+        label_map = dict(self.label_map)
         edge_labels = nx.get_edge_attributes(self.graph,'cost')
+        #set postions of graph for consistent ploting
         # pos=nx.spring_layout(self.graph)
-        pos = nx.spectral_layout(self.graph, weight="cost")
+        # pos = nx.spectral_layout(self.graph, weight="cost")
         pos =  nx.circular_layout(self.graph)
-        # print(edge_labels)
         nx.draw_networkx_edge_labels(self.graph,pos = pos, edge_labels= edge_labels )
         nx.draw(self.graph,pos = pos, node_color=self.color_map, node_size = self.size_map, with_labels=True )
-
+        for l in pos:  # raise text positions
+            pos[l][1] += 0.25
+        nx.draw_networkx_labels(self.graph, pos=pos,labels = label_map, verticalalignment="top")
         
-    def plot_nodes_c(self, update = True):
+    def _plot_nodes_c(self, update = True):
         if update == True: 
             self.color_map = []
             for key, val in self.node_status.items():

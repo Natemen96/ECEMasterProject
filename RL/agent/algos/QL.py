@@ -35,7 +35,7 @@ class QLearningTable:
                                                         index=self.q_table.columns, 
                                                         name=state))
     def update_e_greedy(self, ep):
-        #linear decay
+        #linear decay, least reandom after 200 eps
         self.e_greedy = 1 -  min(self.e_min, np.log10((ep + 50)/25))
     
     def save_qtable(self,ep,folder = '../../models/Qtables/'):

@@ -158,23 +158,27 @@ class RandomAgent(BasicAgent):
     return self.ev_loc, self.last_action
 
 class SmartQLAgent(BasicAgent):
-  def __init__(self, car):
+  def __init__(self, car, sample_rate = 100):
     super().__init__(car)
     self.last_action = None
     self.previous_state = None
+    self.i = 0
+    self.sample_rate = sample_rate
 
   def step(self, obs):
+    self.i += 1
     self.obs = obs
+
     # super().step(obs)
     # print()
     # print('Agent Step')
     state = str(tuple(list(self.obs.get_obs())+[round(self.current_battery,1)])) 
     actions = self.get_available_actions()
     
-    action = self.qtable.choose_action(state,self.ep)
-    if action not in (actions + ['nothing']):
-        action = int(action)
-    elif action == 'unload':
+    self.action = self.qtable.choose_action(state,self.ep)
+    if self.action not in (actions + ['nothing']):
+        self.action = int(self.action)
+    elif self.action == 'unload':
       self.unload_tracker_update(self.ev_loc)
     # action = random.choice(actions)
     def select_action(action, actions_list):
@@ -188,19 +192,19 @@ class SmartQLAgent(BasicAgent):
             return actions_list[i] 
         return 'nothing'
 
-    action_comd = select_action(action, actions)
+    action_comd = select_action(self.action, actions)
     action_comd = self.do_action(action_comd)
     self.dead_battery_check()
     if self.dead_battery == True:
       action_comd = 'nothing'
-      action = 'nothing'
+      self.action = 'nothing'
     if self.last_action is not None:
         self.qtable.learn(self.previous_state,
                         self.last_action,
                         self.obs.get_reward(), #need this
                         'last' if self.obs.get_last() else state)
 
-    self.last_action = action
+    self.last_action = self.action
     self.previous_state = state
       # return self.ev_loc, "nothing"
     return self.ev_loc, action_comd
@@ -219,6 +223,7 @@ class SmartQLAgent(BasicAgent):
     elif (self.ev_loc in self.charging_locations):
       if self.current_battery != float(self.MAX_BATTERY):
         reward = (float(self.MAX_BATTERY) - self.current_battery)/float(self.MAX_BATTERY)
+        
         self.obs.add_reward(reward)
       self.current_battery = float(self.MAX_BATTERY)
 
@@ -228,9 +233,10 @@ class SmartQLAgent(BasicAgent):
   def unload(self,cost):
     # print(self.current_battery)
     # print('new unload')
-    if (self.ev_loc in self.black_loc):
+    if (self.ev_loc in self.black_loc) and self.action == 'unload':
       unload_tic = self.unload_tracker[self.ev_loc]
-      reward = math.log10((unload_tic + 30)/10) * cost
+      reward = ((-1*math.log10((unload_tic + 30)/10)+1) * cost)/15
+      reward = max(reward,0)
       self.obs.add_reward(reward)
     self.current_battery -= cost
     # print(self.current_battery)
@@ -241,11 +247,12 @@ class SmartQLAgent(BasicAgent):
     self.last_action = None
     self.previous_state = None
     self.unload_tracker_init()
-    if (self.ep % 10 == 0) and (self.ep > 0):
+    if (self.ep % self.sample_rate == 0) and (self.ep > 0):
       if not os.path.exists(MODEL_PATH):
         os.makedirs(MODEL_PATH)
       self.qtable.save_qtable(self.ep, MODEL_PATH)
     self.ep +=1
+    self.i = 0
     print(f'Current ep {self.ep}')
   
   def create_qtable(self):
