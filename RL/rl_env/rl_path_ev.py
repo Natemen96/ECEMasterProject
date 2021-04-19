@@ -189,14 +189,30 @@ class graph_env():
     
 
     def get_obs(self, node):
+        """
+        starting at i =0, 
+        1st value is the state of node_i, 
+        next value is best cost to node_i via dijkstra, 
+        last value is if the current location of the agent is next to node_i or not
+        check next node
+        """
         obs = []
         len_path = dict(nx.all_pairs_dijkstra(self.graph,weight='cost'))
+        neighbors = list(self.graph.edges(node))
         for key, val in self.node_status.items():
             #get vals which hold status of each nodes 
             obs.append(val)
             #get cost to node from agent_loc 
             obs.append(round( len_path[node][0][key],1))
-        obs.append(tuple(self.graph.edges(node)))
+            if (node, key) in neighbors:
+                #next to node
+                obs.append(1)
+            else:
+                #not next to node 
+                obs.append(0)
+        # obs.append(tuple(self.graph.edges(node)))
+        # print(tuple(self.graph.edges(node)))
+        # print(neighbors)
         return obs
             
     def reset(self):
@@ -371,6 +387,7 @@ class graph_env():
             self.color_map = []
             self.size_map = []
             self.label_map = {}
+            self.action_map = {}
             # self.shape_map = []
             # print(f'current locations: {self.EV_locations}')
             for key, val in self.node_status.items():
@@ -395,16 +412,19 @@ class graph_env():
                     # self.label_map.append(key)
                     # self.label_map.append(self.agents[idx].current_battery)
                     self.label_map[key] = f'Current Charge {(round(self.agents[idx].current_battery,2))}/{(self.agents[idx].MAX_BATTERY)}' 
+                    self.action_map[key] = f'Last Action: {self.agents[idx].last_action}'
                 else:
                     self.size_map.append(300)
                     # self.label_map.append(key)
                     # self.label_map.append(" ")
                     self.label_map[key] = " "
+                    self.action_map[key] = " "
 
         else:       
             pass
 
         label_map = dict(self.label_map)
+        action_map = dict(self.action_map)
         edge_labels = nx.get_edge_attributes(self.graph,'cost')
         #set postions of graph for consistent ploting
         # pos=nx.spring_layout(self.graph)
@@ -415,7 +435,10 @@ class graph_env():
         for l in pos:  # raise text positions
             pos[l][1] += 0.25
         nx.draw_networkx_labels(self.graph, pos=pos,labels = label_map, verticalalignment="top")
-        
+        for l in pos:  # raise text positions
+            pos[l][1] += 0.25
+        nx.draw_networkx_labels(self.graph, pos=pos,labels = action_map, verticalalignment="top")
+
     def _plot_nodes_c(self, update = True):
         if update == True: 
             self.color_map = []

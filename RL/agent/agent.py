@@ -158,12 +158,13 @@ class RandomAgent(BasicAgent):
     return self.ev_loc, self.last_action
 
 class SmartQLAgent(BasicAgent):
-  def __init__(self, car, sample_rate = 100):
+  def __init__(self, car, sample_rate = 100, qtabletraining = True):
     super().__init__(car)
     self.last_action = None
     self.previous_state = None
     self.i = 0
     self.sample_rate = sample_rate
+    self.qtabletraining = qtabletraining
 
   def step(self, obs):
     self.i += 1
@@ -198,7 +199,7 @@ class SmartQLAgent(BasicAgent):
     if self.dead_battery == True:
       action_comd = 'nothing'
       self.action = 'nothing'
-    if self.last_action is not None:
+    if (self.last_action is not None) and (self.qtabletraining==True):
         self.qtable.learn(self.previous_state,
                         self.last_action,
                         self.obs.get_reward(), #need this
@@ -247,7 +248,7 @@ class SmartQLAgent(BasicAgent):
     self.last_action = None
     self.previous_state = None
     self.unload_tracker_init()
-    if (self.ep % self.sample_rate == 0) and (self.ep > 0):
+    if (self.ep % self.sample_rate == 0) and (self.ep > 0) and (self.qtabletraining == True):
       if not os.path.exists(MODEL_PATH):
         os.makedirs(MODEL_PATH)
       self.qtable.save_qtable(self.ep, MODEL_PATH)
@@ -257,6 +258,11 @@ class SmartQLAgent(BasicAgent):
   
   def create_qtable(self):
     self.qtable = QLearningTable(self.get_qtable_actions())
+
+  def load_qtable(self, qtable_file):
+    self.qtable = QLearningTable(self.get_qtable_actions())
+    self.qtable.load_qtable(qtable_file)
+
 
 
 if __name__ == "__main__":

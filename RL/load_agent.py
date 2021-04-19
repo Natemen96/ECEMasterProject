@@ -36,16 +36,20 @@ if __name__ == "__main__":
     # car_agent = agents.RandomAgent(nissan_leaf)
   #1000 ~ 1 min
   # ep = 5000
-  ep = 2
+  ep = 5
   #make sample out of range of ep (rec: >= 3*ep) to avoid saving data
   # sample = ep // 10
   sample = 3*ep
-  car_agent = agents.SmartQLAgent(nissan_leaf, sample)
+  car_agent = agents.SmartQLAgent(nissan_leaf, sample, qtabletraining = False)
 
   network_env = env.graph_env(agents= [car_agent])
   obs = network_env.reset()
   #init table
-  car_agent.create_qtable()
+  # car_agent.create_qtable()
+
+  stamp = '04_07_18_22/qtable_ep_5500.pickle.h5' #state w/ available edges
+  qtablefile = MODEL_PATH+stamp
+  car_agent.load_qtable(qtablefile)
 
   
   n = ep * 21

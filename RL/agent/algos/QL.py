@@ -41,4 +41,6 @@ class QLearningTable:
     def save_qtable(self,ep,folder = '../../models/Qtables/'):
         self.q_table.to_hdf(folder+f'qtable_ep_{int(ep)}.pickle.h5', key='s')
 
+    def load_qtable(self,qtable_file):
+        self.q_table = pd.read_hdf(qtable_file, key='s')
 
