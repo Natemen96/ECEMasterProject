@@ -16,6 +16,8 @@ PATH = '../Demo/ECEMasterProject/RL/agent/'
 
 MODEL_PATH = '../Demo/ECEMasterProject/models/Qtables/'
 
+power_data = 'ECEMasterProject/RL/Data/Avg_House_n/nonsolarhouse/22.npy'
+
 def plot_rl_env(network_env):
     network_env.plot_nodes()
     plt.axis('off')
@@ -35,14 +37,16 @@ if __name__ == "__main__":
 
     # car_agent = agents.RandomAgent(nissan_leaf)
   #1000 ~ 1 min
+  # ep = 1000
   # ep = 5000
-  ep = 2
+  ep = 1
   #make sample out of range of ep (rec: >= 3*ep) to avoid saving data
   # sample = ep // 10
   sample = 3*ep
   car_agent = agents.SmartQLAgent(nissan_leaf, sample)
 
-  network_env = env.graph_env(agents= [car_agent])
+  network_env = env.graph_env(agents= [car_agent], 
+          nonsolarhouse_data_paths = [power_data])
   obs = network_env.reset()
   #init table
   car_agent.create_qtable()

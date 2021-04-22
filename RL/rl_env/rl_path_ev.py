@@ -1,9 +1,11 @@
 import sys 
 import os
+from os.path import isfile, join
 # print(f'Env Path: {os.getcwd()}')
 
 import networkx as nx
 import matplotlib.pyplot as plt
+from networkx.algorithms.clique import enumerate_all_cliques
 import numpy as np
 import random
 from itertools import combinations, groupby
@@ -45,18 +47,25 @@ class Observation():
 
 
 class graph_env():
-    def __init__(self, n = 5, numofhome = 1, numofblackout = 1, numofblackoutws = 0, numofchargingstation = 0, max_actions = 3, blackout_str = 'Brazoria', agents = [None]):
+    def __init__(self, n = 5, numofhome = 1, numofblackout = 1, numofblackoutws = 0, 
+                numofchargingstation = 0, max_actions = 3, blackout_str = 'Brazoria', 
+                agents = [None], nonsolarhouse_data_paths=[None], solarhouse_data_paths=[None],
+                data_sample = 6):
         """Takes in a randomly generated graph, and keeps track of ep infomation
         numofhome - number of homes for agent starting point: int
         numofblackout - number of houses with blackout: int
         numofblackout - number of houses with solarpower: int
         blackout_str - Reads Blackout data from npy file: str
         """
-        self.kwags = (n, numofhome, numofblackout, numofblackoutws, numofchargingstation,max_actions,blackout_str, agents)
+        self.kwags = (n, numofhome, numofblackout, numofblackoutws, 
+        numofchargingstation,max_actions,blackout_str, agents,
+        nonsolarhouse_data_paths, solarhouse_data_paths, data_sample)
         self.game_over = False
         self.game_over_reasons = ['All Agents Stuck', 'Power Back', "Week's Over"]
         self.game_over_reason = None
-        assert numofhome == len(agents), "Env Load Error: Number of homes must be equal number of agents"
+        assert numofhome == len(agents), f"Env Load Error: Number of homes must be equal number of agents"
+        assert numofblackout >= blen(nonsolarhouse_data_paths), f"Env Load Error:, can't have more paths ({blen(nonsolarhouse_data_paths)}) than nodes ({numofblackout}) allocated for blackout house" 
+        assert numofblackoutws >= blen(solarhouse_data_paths), f"Env Load Error:, can't have more paths ({blen(solarhouse_data_paths)}) than nodes ({numofblackoutws}) allocated for blackout solar houses"
         # self.ev = ev
         # self.day = 0
         self.agents = agents 
@@ -90,7 +99,15 @@ class graph_env():
         self.charging_nodes, self.buffer_nodes = self.init_update_graph(buffer_nodes, numofchargingstation,4)
         # print(self.black_nodes)
         #set costs
+        self.data_sample = data_sample
+        self.nonsolarhouse_power_data = []
+        self.solarhouse_power_data = []
+
+        self.nonsolarhouse_data_paths = None if nonsolarhouse_data_paths == [None] else nonsolarhouse_data_paths
+        self.solarhouse_data_paths = None if solarhouse_data_paths == [None] else solarhouse_data_paths
+        
         self.set_cost(n)
+
         #EVs start at home
         self.EV_locations = copy.deepcopy(self.home_nodes)
         # print(self.home_nodes,self.charging_nodes)
@@ -118,7 +135,7 @@ class graph_env():
             pass
         #load blackout data
         try:
-            blackout_data = np.load(PATH+blackout_str+'.npy') 
+            blackout_data = np.load(PATH+'County/'+blackout_str+'.npy') 
         except OSError: 
             print (f'Could not open/read file: {PATH+blackout_str+".npy"}')
         self.get_power_samples(blackout_data, self.max_i)
@@ -174,9 +191,9 @@ class graph_env():
             for i,agent in enumerate(self.agents):
                 #give them to agents
                 agent.set_available_actions(self.actions[i])
-
+            self.update_cost()
             self.power_check() 
-
+            
             self.i +=1 
 
             for i,obs in enumerate(self.agents_obs):
@@ -283,10 +300,59 @@ class graph_env():
         samples = random.sample(nodes, 1)
         new_nodes = list(set(nodes).symmetric_difference(set(samples)))
         return samples, new_nodes
+    def update_cost(self):
+        #TODO
+        def update_node_cost(data, i ,black_nodes):
+            data_len = len(data)
+            data_idx = self.i % self.data_sample
+            data_idx = round((data_idx / self.data_sample) * data_len)
+            cost = data[data_idx]
+            node = black_nodes[i]
+            if node != None:
+                self.graph.nodes[node]["cost"] = round(cost, 2)
 
-    def set_cost(self,n):
+        # and set cost using mod
+        if  (len(self.nonsolarhouse_power_data) == 0 and len(self.solarhouse_power_data) == 0):
+            pass 
+        else:
+            if len(self.nonsolarhouse_power_data) != 0:
+                for i, data in enumerate(self.nonsolarhouse_power_data):
+                    update_node_cost(data, i, self.black_nodes)
+            if len(self.solarhouse_power_data) != 0:
+                for i, data in enumerate(self.solarhouse_power_data):
+                    update_node_cost(data, i, self.blackws_nodes)
+    
+    
+    def set_cost(self,n, random_flag = False):
+        self._set_cost(n)
+        
+        def load_data(house_power_data, file_paths):
+            "Helper function to load"
+            for file_path in file_paths:
+                if random_flag == True:
+                    files_list = [f for f in os.listdir(file_path) if isfile(join(file_path, f))]
+                    picked_file = random.choice(files_list)
+                    file_path = file_path+picked_file
+                try:
+                    house_power_data.append(np.load(file_path))
+                except OSError: 
+                    print (f'Could not open/read file: {file_path+".npy"}')
+                    print(f'Using genetic values, will be genetic value instead')
+        
+        if (self.nonsolarhouse_data_paths == None and self.solarhouse_data_paths == None):
+            print(f'Using genetic values')
+        else:
+            if self.nonsolarhouse_data_paths != None: 
+                load_data(self.nonsolarhouse_power_data, self.nonsolarhouse_data_paths)
+            if self.solarhouse_data_paths != None: 
+                load_data(self.solarhouse_power_data, self.solarhouse_data_paths)
+
+        self.update_cost()
+
+
+    def _set_cost(self,n):
         #TODO: reads from model not random 
-        a = np.round(np.random.rand(n,n)[np.triu_indices(n)],1)
+        a = np.round(np.random.rand(n,n)[np.triu_indices(n)]*10,1)
         
         for i,e in enumerate(self.graph.edges()):
             self.graph[e[0]][e[1]]["cost"] = a[i]
@@ -388,22 +454,28 @@ class graph_env():
             self.size_map = []
             self.label_map = {}
             self.action_map = {}
+            self.charge_map = {}
             # self.shape_map = []
             # print(f'current locations: {self.EV_locations}')
             for key, val in self.node_status.items():
                 if val == 1:
                     self.color_map.append('darkgrey')
+                    self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
                     # self.shape_map.append(300)
                 elif val == 2:
                     self.color_map.append('lightgrey')
+                    self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
                     # self.shape_map.append(300)
                 elif val == 4:
                     self.color_map.append('yellow')
+                    self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
                     # self.shape_map.append(300)
                 elif val == 5:
                     self.color_map.append('green')
+                    self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
                 else:
                     self.color_map.append('blue')
+                    self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
 
                 if key in (self.EV_locations):
                     # print(f'current location: {key}')
@@ -411,7 +483,7 @@ class graph_env():
                     idx = self.EV_locations.index(key)
                     # self.label_map.append(key)
                     # self.label_map.append(self.agents[idx].current_battery)
-                    self.label_map[key] = f'Current Charge {(round(self.agents[idx].current_battery,2))}/{(self.agents[idx].MAX_BATTERY)}' 
+                    self.label_map[key] = f'Current Charge: {(round(self.agents[idx].current_battery,2))}/{(self.agents[idx].MAX_BATTERY)}' 
                     self.action_map[key] = f'Last Action: {self.agents[idx].last_action}'
                 else:
                     self.size_map.append(300)
@@ -425,6 +497,7 @@ class graph_env():
 
         label_map = dict(self.label_map)
         action_map = dict(self.action_map)
+        
         edge_labels = nx.get_edge_attributes(self.graph,'cost')
         #set postions of graph for consistent ploting
         # pos=nx.spring_layout(self.graph)
@@ -438,21 +511,10 @@ class graph_env():
         for l in pos:  # raise text positions
             pos[l][1] += 0.25
         nx.draw_networkx_labels(self.graph, pos=pos,labels = action_map, verticalalignment="top")
+        for l in pos:  # lowwer text positions
+            pos[l][1] -= 0.75
+        nx.draw_networkx_labels(self.graph, pos=pos,labels = self.charge_map, verticalalignment="bottom")
 
-    def _plot_nodes_c(self, update = True):
-        if update == True: 
-            self.color_map = []
-            for key, val in self.node_status.items():
-                self.color_map.append(f'C{val}')
-                if key in self.EV_locations:
-                    # print(key)
-                    self.size_map.append(1000)
-                else:
-                    self.size_map.append(300)
-        else:       
-            pass
-        nx.draw(self.graph, node_color=self.color_map, node_size = self.size_map, with_labels=True)
-    
     def gnp_random_connected_graph(self, n, p = .5):
         """ 
         Generates a random undirected graph, similarly to an Erdős-Rényi 
