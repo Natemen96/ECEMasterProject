@@ -39,11 +39,13 @@ if __name__ == "__main__":
   #1000 ~ 1 min
   # ep = 1000
   # ep = 5000
-  ep = 1
+  ep = 50000
+  # ep = 100
   #make sample out of range of ep (rec: >= 3*ep) to avoid saving data
-  # sample = ep // 10
-  sample = 3*ep
-  car_agent = agents.SmartQLAgent(nissan_leaf, sample)
+  sample = ep // 10
+  # sample = 3*ep
+  car_agent = agents.SmartQLAgent(nissan_leaf, sample, quiet = False)
+  # car_agent = agents.RandomDataAgent(nissan_leaf)
 
   network_env = env.graph_env(agents= [car_agent], 
           nonsolarhouse_data_paths = [power_data])
@@ -56,7 +58,7 @@ if __name__ == "__main__":
   tic = time.time()
   for i in range(n):
       #uncomment to turn on visual
-      plot_rl_env(network_env)
+      # plot_rl_env(network_env)
 
       #random agent doesn't use obs
 

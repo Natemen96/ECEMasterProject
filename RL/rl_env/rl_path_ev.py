@@ -124,9 +124,10 @@ class graph_env():
             agent.set_available_actions(self.actions[i])
             agent.set_all_loc(self.allnodes)
             # agent.set_qtable_actions()
+            agent.reset()
             obs = Observation()
             self.agents_obs.append(obs)
-            agent.reset()
+            
 
         #delete None dict 
         try:
@@ -220,7 +221,7 @@ class graph_env():
             #get vals which hold status of each nodes 
             obs.append(val)
             #get cost to node from agent_loc 
-            obs.append(round( len_path[node][0][key],1))
+            obs.append(round( len_path[node][0][key],0))
             if (node, key) in neighbors:
                 #next to node
                 obs.append(1)
@@ -352,19 +353,19 @@ class graph_env():
 
     def _set_cost(self,n):
         #TODO: reads from model not random 
-        a = np.round(np.random.rand(n,n)[np.triu_indices(n)]*10,1)
+        a = np.round(np.random.rand(n,n)[np.triu_indices(n)]*30,1)
         
         for i,e in enumerate(self.graph.edges()):
             self.graph[e[0]][e[1]]["cost"] = a[i]
 
         for node in self.black_nodes:
             if node != None:
-                self.graph.nodes[node]["cost"] = 30 
+                self.graph.nodes[node]["cost"] = 1.5 
                 # print(node)
         
         for node in self.blackws_nodes:
             if node != None:
-                self.graph.nodes[node]["cost"] = 20
+                self.graph.nodes[node]["cost"] = 1
 
         for node in  self.home_nodes + self.charging_nodes + self.buffer_nodes:
             if node != None:

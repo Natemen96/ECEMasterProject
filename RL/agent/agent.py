@@ -1,9 +1,11 @@
 import os 
 import random 
+import csv
 # from algos.QL import QLearningTable
 from agent.algos.QL import QLearningTable
 import math
 from datetime import datetime
+
 # sys.path.append('/ECEMasterProject/RL/rl_env')
 # import rl_path_ev 
 print()
@@ -14,7 +16,7 @@ print(f'Agent Path: {os.getcwd()}')
 
 dt_string =  datetime.now().strftime("%m_%d_%H_%M")
 MODEL_PATH = f'../Demo/ECEMasterProject/models/Qtables/{dt_string}/'
-
+DATA_PATH = f'ECEMasterProject/RL/agent/Sim_Data/reward_{dt_string}.csv'
 class BasicAgent():
   def __init__(self,car):
     
@@ -144,7 +146,6 @@ class RandomAgent(BasicAgent):
     self.last_action = 'nothing'
 
   def step(self, obs=None):
-    # super().step(obs)
     # print()
     # print('Agent Step')
     actions = self.get_available_actions()
@@ -156,15 +157,20 @@ class RandomAgent(BasicAgent):
       self.last_action = 'nothing'
       # return self.ev_loc, "nothing"
     return self.ev_loc, self.last_action
+  
+  # def reset(self):
+  #   super().reset()
+
 
 class SmartQLAgent(BasicAgent):
-  def __init__(self, car, sample_rate = 100, qtabletraining = True):
+  def __init__(self, car, sample_rate = 100, qtabletraining = True, quiet = True ):
     super().__init__(car)
     self.last_action = None
     self.previous_state = None
     self.i = 0
     self.sample_rate = sample_rate
     self.qtabletraining = qtabletraining
+    self.quiet = quiet
 
   def step(self, obs):
     self.i += 1
@@ -173,7 +179,7 @@ class SmartQLAgent(BasicAgent):
     # super().step(obs)
     # print()
     # print('Agent Step')
-    state = str(tuple(list(self.obs.get_obs())+[round(self.current_battery,1)])) 
+    state = str(tuple(list(self.obs.get_obs())+[round(self.current_battery,0)])) 
     actions = self.get_available_actions()
     
     self.action = self.qtable.choose_action(state,self.ep)
@@ -223,8 +229,8 @@ class SmartQLAgent(BasicAgent):
     
     elif (self.ev_loc in self.charging_locations):
       if self.current_battery != float(self.MAX_BATTERY):
-        reward = (float(self.MAX_BATTERY) - self.current_battery)/float(self.MAX_BATTERY)
-        
+        reward = (float(self.MAX_BATTERY) - (self.current_battery)**(1))/float(self.MAX_BATTERY)
+        reward = max(reward,0)
         self.obs.add_reward(reward)
       self.current_battery = float(self.MAX_BATTERY)
 
@@ -236,7 +242,7 @@ class SmartQLAgent(BasicAgent):
     # print('new unload')
     if (self.ev_loc in self.black_loc) and self.action == 'unload':
       unload_tic = self.unload_tracker[self.ev_loc]
-      reward = ((-1*math.log10((unload_tic + 30)/10)+1) * cost)/15
+      reward = ((-1*math.log10((unload_tic + 30)/10)+.53) * cost)*25
       reward = max(reward,0)
       self.obs.add_reward(reward)
     self.current_battery -= cost
@@ -252,6 +258,8 @@ class SmartQLAgent(BasicAgent):
       if not os.path.exists(MODEL_PATH):
         os.makedirs(MODEL_PATH)
       self.qtable.save_qtable(self.ep, MODEL_PATH)
+    if self.quiet != True and self.ep > 0:
+      write_to_csv(self.obs.get_reward(), DATA_PATH)
     self.ep +=1
     self.i = 0
     print(f'Current ep {self.ep}')
@@ -263,7 +271,57 @@ class SmartQLAgent(BasicAgent):
     self.qtable = QLearningTable(self.get_qtable_actions())
     self.qtable.load_qtable(qtable_file)
 
+def write_to_csv(tosave, PATH):
+    "Helper function to write to csv to make data collection less painful"
+    if not os.path.exists(PATH):
+        with open(PATH, 'w', newline='') as csvfile:
+            csvfile.close()
+    with open(PATH, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow([tosave])
 
+
+class RandomDataAgent(SmartQLAgent):
+  def __init__(self, car):
+    super().__init__(car, qtabletraining = False, quiet = False)
+
+  def step(self, obs=None):
+    # print()
+    # print('Agent Step')
+    self.i += 1
+    self.obs = obs
+
+    actions = self.get_available_actions()
+    self.action = random.choice(actions)
+    if self.action not in (actions + ['nothing']):
+        self.action = int(self.action)
+    elif self.action == 'unload':
+      self.unload_tracker_update(self.ev_loc)
+
+    def select_action(action, actions_list):
+      if action in actions_list:
+        return action
+      elif action == actions_list[-1][0][0]:
+        return 'nothing'
+      else:
+        for i in range(2,len(actions_list)):
+          if actions_list[i][0][1] == action:
+            return actions_list[i] 
+        return 'nothing'
+        
+    action_comd = select_action(self.action, actions)
+    action_comd = self.do_action(action_comd)
+    self.dead_battery_check()
+    if self.dead_battery == True:
+      action_comd = 'nothing'
+      self.last_action = 'nothing'
+      # return self.ev_loc, "nothing"
+    self.last_action = self.action
+
+    return self.ev_loc, action_comd
+  
+  def reset(self):
+    super().reset()
 
 if __name__ == "__main__":
   # with open(PATH+'nissan_leaf_2017.json') as f:
