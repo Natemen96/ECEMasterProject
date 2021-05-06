@@ -8,13 +8,13 @@ import agent.agent as agents
 # print()
 # print(f'Main Path: {os.getcwd()}')
 
-PATH = '../Demo/ECEMasterProject/RL/agent/'
+PATH = 'RL/agent/'
 
-MODEL_PATH = '../Demo/ECEMasterProject/models/Qtables/'
+MODEL_PATH = 'models/Qtables/'
 
-power_data = 'ECEMasterProject/RL/Data/Avg_House_n/nonsolarhouse/22.npy'
+power_data = 'RL/Data/Avg_House_n/nonsolarhouse/22.npy'
 
-img_folder_path = 'ECEMasterProject/RL/imgs/' 
+img_folder_path = 'RL/imgs/' 
 
 def plot_rl_env(network_env, save_plt_path = None):
     

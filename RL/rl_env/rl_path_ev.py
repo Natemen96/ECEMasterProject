@@ -12,7 +12,7 @@ from itertools import combinations, groupby
 import copy 
 
 # PATH = '../Data/'
-PATH = '../Demo/ECEMasterProject/RL/Data/'
+PATH = 'RL/Data/'
 
 def blen(lst):
     "Better len for list, doesn't count Nones"
@@ -20,6 +20,8 @@ def blen(lst):
 
 class Observation():
     def __init__(self):
+        """[Observation: Class for Observation objects. Filled with getters and senters]
+        """        
         self.obs = None 
         self.reward = 0 
         self.last = False
@@ -51,12 +53,21 @@ class graph_env():
                 numofchargingstation = 0, max_actions = 3, blackout_str = 'Brazoria', 
                 agents = [None], nonsolarhouse_data_paths=[None], solarhouse_data_paths=[None],
                 data_sample = 6):
-        """Takes in a randomly generated graph, and keeps track of ep infomation
-        numofhome - number of homes for agent starting point: int
-        numofblackout - number of houses with blackout: int
-        numofblackout - number of houses with solarpower: int
-        blackout_str - Reads Blackout data from npy file: str
-        """
+        """[graph_env: Randomly generated a fully connected graph n nodes]
+
+        Args:
+            n (int, optional): [number of nodes]. Defaults to 5.
+            numofhome (int, optional): [number of homes for agent starting point]. Defaults to 1.
+            numofblackout (int, optional): [number of houses with blackout]. Defaults to 1.
+            numofblackoutws (int, optional): [number of blackout houses with solarpower]. Defaults to 0.
+            numofchargingstation (int, optional): [number of charging station]. Defaults to 0.
+            max_actions (int, optional): [max number of action can be done times 7.  By default 3 (7) = 21]. Defaults to 3.
+            blackout_str (str, optional): [Reads Blackout data from npy file]. Defaults to 'Brazoria'.
+            agents (list, optional): [Agent objects]. Defaults to [None].
+            nonsolarhouse_data_paths (list, optional): [Path for npy file with nonsolar data info. Added to a node per path.]. Defaults to [None].
+            solarhouse_data_paths (list, optional): [Path for npy file with solarhouse data info. Added to a node per path.]. Defaults to [None].
+            data_sample (int, optional): [how many data sample it take from data in paths, samples taken evenly throughout data. By default (0/6. 1/6 ... 6/6 0/6 ...) sample]. Defaults to 6.
+        """        
         self.kwags = (n, numofhome, numofblackout, numofblackoutws, 
         numofchargingstation,max_actions,blackout_str, agents,
         nonsolarhouse_data_paths, solarhouse_data_paths, data_sample)
@@ -279,10 +290,6 @@ class graph_env():
         self.actions = actions
         # pass
 
-    def reward_output(self):
-        "TODO: figure out reward for actions / obs"
-        pass
-
     def ev_for_agents(self):
         return self.EV_locations 
 
@@ -302,7 +309,6 @@ class graph_env():
         new_nodes = list(set(nodes).symmetric_difference(set(samples)))
         return samples, new_nodes
     def update_cost(self):
-        #TODO
         def update_node_cost(data, i ,black_nodes):
             data_len = len(data)
             data_idx = self.i % self.data_sample
@@ -352,7 +358,6 @@ class graph_env():
 
 
     def _set_cost(self,n):
-        #TODO: reads from model not random 
         a = np.round(np.random.rand(n,n)[np.triu_indices(n)]*30,1)
         
         for i,e in enumerate(self.graph.edges()):

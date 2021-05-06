@@ -10,11 +10,15 @@ print()
 print(f'Agent Path: {os.getcwd()}')
 
 dt_string =  datetime.now().strftime("%m_%d_%H_%M")
-MODEL_PATH = f'../Demo/ECEMasterProject/models/Qtables/{dt_string}/'
-DATA_PATH = f'ECEMasterProject/RL/agent/Sim_Data/reward_{dt_string}.csv'
+MODEL_PATH = f'models/Qtables/{dt_string}/'
+DATA_PATH = f'RL/agent/Sim_Data/reward_{dt_string}.csv'
 class BasicAgent():
   def __init__(self,car):
-    
+    """[BasicAgent: Basic Agent that act as skeleton for other agent. Won't work by it's self.]
+
+    Args:
+        car ([dict]): [car information in the form of a python dictionary]
+    """    
     self.model = car['model']
     self.make = car['make']
     self.year = car['year']
@@ -160,6 +164,14 @@ class _RandomAgent(BasicAgent):
 
 class SmartQLAgent(BasicAgent):
   def __init__(self, car, sample_rate = 100, qtabletraining = True, quiet = True ):
+    """[SmartQLAgent: Smart Agent that uses Qtable to make decisions]
+
+    Args:
+        car ([dict]): [car information in the form of a python dictionary]
+        sample_rate (int, optional): [decides how often a sample of the qtable is taken. If left to default it's every 1/100 of total ep]. Defaults to 100.
+        qtabletraining (bool, optional): [Flag for turning qtable training on]. Defaults to True.
+        quiet (bool, optional): [Flag for turning data collection on]. Defaults to True.
+    """    
     super().__init__(car)
     self.last_action = None
     self.previous_state = None
@@ -279,6 +291,11 @@ def write_to_csv(tosave, PATH):
 
 class RandomDataAgent(SmartQLAgent):
   def __init__(self, car):
+    """[RandomDataAgent: Used for data collection of random agent. Doesn't use Observation.]
+
+    Args:
+        car ([dict]): [car information in the form of a python dictionary]
+    """    
     super().__init__(car, qtabletraining = False, quiet = False)
 
   def step(self, obs=None):
