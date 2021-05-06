@@ -6,13 +6,8 @@ from agent.algos.QL import QLearningTable
 import math
 from datetime import datetime
 
-# sys.path.append('/ECEMasterProject/RL/rl_env')
-# import rl_path_ev 
 print()
 print(f'Agent Path: {os.getcwd()}')
-
-# PATH = '../Demo/ECEMasterProject/RL/agent/'
-  # print(nissan_leaf)
 
 dt_string =  datetime.now().strftime("%m_%d_%H_%M")
 MODEL_PATH = f'../Demo/ECEMasterProject/models/Qtables/{dt_string}/'
@@ -140,7 +135,8 @@ class BasicAgent():
     self.unload_tracker[node] += 1
     # print(self.current_battery)
 
-class RandomAgent(BasicAgent):
+class _RandomAgent(BasicAgent):
+  "deprecated, but kept for historicals reason"
   def __init__(self, car):
     super().__init__(car)
     self.last_action = 'nothing'
@@ -324,12 +320,5 @@ class RandomDataAgent(SmartQLAgent):
     super().reset()
 
 if __name__ == "__main__":
-  # with open(PATH+'nissan_leaf_2017.json') as f:
-  #   nissan_leaf = json.load(f)
-  #   # print(nissan_leaf)
-  #   # car_agent = BasicAgent(nissan_leaf)
-  #   car_agent = RandomAgent(nissan_leaf)
-  #   # print(car_agent.avg_energy_com, car_agent.battery)
-  #   car_agent.reset()
-  #   # print(car_agent.current_battery)
+
   pass

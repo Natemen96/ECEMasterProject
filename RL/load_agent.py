@@ -28,7 +28,8 @@ def plot_rl_env(network_env):
     plt.close()
 
 if __name__ == "__main__":
-
+  #TODO: Make use model is using model and not using
+  #  random based on ep count
   with open(PATH+'nissan_leaf_2017.json') as f:
   # with open(PATH+'nissan_leaf_2019.json') as f:
   # with open(PATH+'dying_nissan_leaf.json') as f:
