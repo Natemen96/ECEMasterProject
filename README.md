@@ -38,7 +38,7 @@ Go to the project directory
 
 ## Installation
 
-WARNING: This is a large install (~2GB). Depending on your set up, you may find it easier to install the package yourself. The list can be found in the `conda_env` folder. See 'conda_env/rl_window.yml' for the most up to date package list.
+WARNING: This is a large install (~2GB) and will take approximately 20mins depending on internet speed. Depending on your set up, you may find it easier to install the package yourself. The list can be found in the `conda_env` folder. See 'conda_env/rl_window.yml' for the most up to date package list.
 
 The conda environment follow this installation please 1st download [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
 
@@ -54,7 +54,7 @@ make sure to run the program within the conda env.
 
 ## Purpose
 
-In situations of natural disasters/phenomenons, blackouts can occur. To combat this, EV (electric vehicles) drivers can use their vehicles as batteries for customers/ clients. To simulate the difficulty of this challenge of getting to as much customers as possible until the blackout period is over, a RL environment was created. This environment features random scenarios based on node network size, amount of the houses (can't be larger than node size), blackout data, and housing models to try simulate in a high level matter.
+In situations of natural disasters/phenomenons, blackouts can occur. To combat this, EV (electric vehicles) drivers can use their vehicles as batteries for customers/ clients. To simulate the difficulty of this challenge of getting to as many customers as possible until the blackout period is over, a RL environment was created. This environment features random scenarios based on node network size, amount of the houses (can't be larger than node size), blackout data, and housing models to simulate a blackout response in a high level matter.
 
 ## Demo
 
@@ -75,9 +75,9 @@ More details can be found in [Action & State Space](#action--state-space) sectio
 ## Task for Agent
 
 Start at "Home" (a node) travel to each location in exchange for power (main resource for EV),
-unload power in exchange for reward, travel back to home in exchange for power. The agent can restore power at "Home" and earn more reward depending on how much power it got back. The more power it restore the most it's rewarded.
+unload power in exchange for reward, travel back to home in exchange for power. The agent can restore power at "Home" and earn more reward depending on how much power it got back. The more power it restores for itself the more it's rewarded.
 
-Once power is restored in at a node with a power charging station, the agent can restore energy there as well. Some nodes will be empty depending on parameters.
+Once power is restored in a node with a power charging station, the agent can restore energy there as well. Some nodes will be empty depending on parameters.
 
 ## Environment Overview
 
@@ -113,7 +113,7 @@ Args:
 ## Agent Overview
 
 ```txt
-BasicAgent: Basic Agent that act as skeleton for other agent. Won't work by it's self.
+BasicAgent: Basic Agent that act as skeleton for other agent. Won't work by itself.
 
 Args:
     car ([dict]): [car information in the form of a python dictionary]
@@ -180,7 +180,7 @@ Episode is over when EV is out of energy or network is completely powered.
 
 ## Logic
 
-Each nodes was designed to be based on a house dataset. Some houses that are solar powered will need less power from EVs compared to non-solar powered homes. The cost of house node can be derive from the housing data.
+Each nodes was designed to be based on a house dataset. Some houses that are solar powered will need less power from EVs compared to non-solar powered homes. The cost of house node can be derived from the housing data.
 
 Percentage of blackout based on texas blackout data, as well as change per day.
 
@@ -214,11 +214,11 @@ Learned more about making DL/ML models.
 
 Learned more about data analysis from exploring data and results from DL/ML training.
 
-Learned about networkx and it's capabilities for graph theory related for project.
+Learned about networkx and it's capabilities for graph theory related for projects.
 
-Learned more about making reinforcement learning environment and agents.
+Learned more about making reinforcement learning environments and agents.
 
-Learned a bit more about data scraping as I need to scrap blackout data during the [Texas Blackout](https://en.wikipedia.org/wiki/2021_Texas_power_crisis)
+Learned more about data scraping as I needed to scrap blackout data during the [Texas Blackout](https://en.wikipedia.org/wiki/2021_Texas_power_crisis)
 
 Learned how to make a gif using images in python.
 

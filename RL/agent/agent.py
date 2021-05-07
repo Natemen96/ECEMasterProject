@@ -38,6 +38,11 @@ class BasicAgent():
     pass
 
   def set_all_loc(self,nodes):
+    """[get all possible locations]
+
+    Args:
+        nodes ([type]): [description]
+    """    
     self.all_loc = nodes
 
   def get_qtable_actions(self):
@@ -140,12 +145,20 @@ class BasicAgent():
     # print(self.current_battery)
 
 class _RandomAgent(BasicAgent):
-  "deprecated, but kept for historicals reason"
+  "deprecated, but kept for historical reasons"
   def __init__(self, car):
     super().__init__(car)
     self.last_action = 'nothing'
 
   def step(self, obs=None):
+    """[step, where the agent decides it's next action]
+
+    Args:
+        obs ([obs object], optional): [obs object from env]. Defaults to None.
+
+    Returns:
+        [type]: [current agent location and it's next action]
+    """    
     # print()
     # print('Agent Step')
     actions = self.get_available_actions()

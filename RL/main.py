@@ -17,19 +17,24 @@ power_data = '../RL/Data/Avg_House_n/nonsolarhouse/22.npy'
 img_folder_path = '../RL/imgs/' 
 
 def plot_rl_env(network_env, save_plt_path = None):
-    
-    network_env.plot_nodes()
-    plt.axis('off')
-    axis = plt.gca()
-    axis.set_xlim([1.4*x for x in axis.get_xlim()])
-    axis.set_ylim([1.4*y for y in axis.get_ylim()])
-    plt.tight_layout()
-    if save_plt_path != None:
-      #shouldn't be used for loonger than a month
-      dt_string =  datetime.now().strftime("%d_%H_%M_%S_%f")
-      plt.savefig(save_plt_path+dt_string+'.png')
-    plt.pause(2)
-    plt.close()
+  """[Plot visual for rl env, slows down training dramatically however]
+
+  Args:
+      network_env ([type]): [rl env to plot]
+      save_plt_path ([type], optional): [path for saving imgs]. Defaults to None.
+  """ 
+  network_env.plot_nodes()
+  plt.axis('off')
+  axis = plt.gca()
+  axis.set_xlim([1.4*x for x in axis.get_xlim()])
+  axis.set_ylim([1.4*y for y in axis.get_ylim()])
+  plt.tight_layout()
+  if save_plt_path != None:
+    #shouldn't be used for loonger than a month
+    dt_string =  datetime.now().strftime("%d_%H_%M_%S_%f")
+    plt.savefig(save_plt_path+dt_string+'.png')
+  plt.pause(2)
+  plt.close()
 
 def main():
   "an example of how to use the env and agents together"
