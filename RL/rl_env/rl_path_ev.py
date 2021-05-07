@@ -150,6 +150,8 @@ class graph_env():
             blackout_data = np.load(PATH+'County/'+blackout_str+'.npy') 
         except OSError: 
             print (f'Could not open/read file: {PATH+blackout_str+".npy"}')
+        except ImportError:
+            print(f'Make sure conda env is install or set up numpy as well as other libs')
         self.get_power_samples(blackout_data, self.max_i)
         
         # for i,obs in enumerate(self.agents_obs):

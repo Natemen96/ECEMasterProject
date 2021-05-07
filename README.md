@@ -45,8 +45,9 @@ The conda environment follow this installation please 1st download [conda](https
 After conda is install do the following to set up the environment
 
 ```bash
-  conda env create -f conda_env/rl_windows.yml #
-  mv rl_windows rl_env #or any name you prefer
+  mv conda_env/rl_window.yml conda_env/rl_env.yml  #or any name you prefer
+  conda env create -f conda_env/rl_window.yml #
+
   conda activate rl_env #verify it work 
 ```
 
@@ -58,9 +59,7 @@ In situations of natural disasters/phenomenons, blackouts can occur. To combat t
 
 ## Demo
 
-<p align="center">
 ![Demo of RL environment + random agent in action](visuals/demogif.gif)
-</p>
 
 Example of an random agent in action.
 
