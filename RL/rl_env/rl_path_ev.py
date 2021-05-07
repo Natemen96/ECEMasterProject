@@ -12,7 +12,7 @@ from itertools import combinations, groupby
 import copy 
 
 # PATH = '../Data/'
-PATH = 'RL/Data/'
+PATH = '../RL/Data/'
 
 def blen(lst):
     "Better len for list, doesn't count Nones"
