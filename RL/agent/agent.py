@@ -10,8 +10,8 @@ print()
 print(f'Agent Path: {os.getcwd()}')
 
 dt_string =  datetime.now().strftime("%m_%d_%H_%M")
-MODEL_PATH = f'models/Qtables/{dt_string}/'
-DATA_PATH = f'RL/agent/Sim_Data/reward_{dt_string}.csv'
+MODEL_PATH = f'../models/Qtables/{dt_string}/'
+DATA_PATH = f'../RL/agent/Sim_Data/reward_{dt_string}.csv'
 class BasicAgent():
   def __init__(self,car):
     """[BasicAgent: Basic Agent that act as skeleton for other agent. Won't work by it's self.]

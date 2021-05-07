@@ -15,7 +15,7 @@ import agent.agent as agents
 PATH = '../Demo/ECEMasterProject/RL/agent/'
 
 MODEL_PATH = '../Demo/ECEMasterProject/models/Qtables/'
-power_data = 'ECEMasterProject/RL/Data/Avg_House_n/nonsolarhouse/22.npy'
+power_data = '../ECEMasterProject/RL/Data/Avg_House_n/nonsolarhouse/22.npy'
 
 def plot_rl_env(network_env):
     network_env.plot_nodes()

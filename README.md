@@ -58,7 +58,10 @@ In situations of natural disasters/phenomenons, blackouts can occur. To combat t
 
 ## Demo
 
+<p align="center">
 ![Demo of RL environment + random agent in action](visuals/demogif.gif)
+</p>
+
 Example of an random agent in action.
 
 Load represents the power needed at the moment from the node.
