@@ -45,8 +45,7 @@ The conda environment follow this installation please 1st download [conda](https
 After conda is install do the following to set up the environment
 
 ```bash
-  mv conda_env/rl_window.yml conda_env/rl_env.yml  #or any name you prefer
-  conda env create -f conda_env/rl_window.yml #
+  conda env create -f conda_env/rl_window.yml --name rl_env  #or any name you prefer
 
   conda activate rl_env #verify it work 
 ```
