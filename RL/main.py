@@ -59,7 +59,7 @@ def main():
   # sample = 1 
 
   #make sample out of range of ep (rec: >= 3*ep) to avoid saving data
-  # sample = 3*ep
+  sample = 3*ep
   
   #example how init a agent, only requirement is the dict from the json
   car_agent = agents.SmartQLAgent(nissan_leaf, sample, quiet = False)

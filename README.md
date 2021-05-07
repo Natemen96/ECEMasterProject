@@ -58,7 +58,7 @@ Go to the project directory
 
 ## Installation
 
-WARNING: This is a large install (~2GB) and will take approximately 30 mins depending on internet speed. Depending on your set up, you may find it easier to install the package yourself. The list can be found in the `conda_env` folder. See 'conda_env/rl_window.yml' for the most up to date package list.
+WARNING: This is a large install (~2GB) and will take approximately 30 mins depending on internet speed. Depending on your set up, you may find it easier to install the package yourself. The list can be found in the `conda_env` folder. See 'conda_env/rl_window.yml' for the most up to date package list. Works best on Windows.
 
 For easy installing, using a conda first make sure you have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 

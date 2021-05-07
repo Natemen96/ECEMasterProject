@@ -1,7 +1,6 @@
 import os 
 import random 
 import csv
-# from algos.QL import QLearningTable
 from agent.algos.QL import QLearningTable
 import math
 from datetime import datetime
@@ -27,8 +26,6 @@ class BasicAgent():
     self.current_battery = float(car['battery_capacity(kWh)']) #assuming tank is full at start
     self.dead_battery = False 
     print(f'Data Load Successfully for {self.make} - {self.model} - {self.year}')
-    # print(self.current_battery)
-    # print(self.MAX_BATTERY)
     self.basic_actions = ("chargeup","unload")
     self.ev_loc = None
     self.ep = -1
@@ -39,7 +36,6 @@ class BasicAgent():
     Args:
         obs ([obs object], optional): [obs object from env]. Defaults to None.
     """    
-    #return an action, use obs to help 
     pass
 
   def set_all_loc(self,nodes):
@@ -70,11 +66,8 @@ class BasicAgent():
         env_actions ([type]): [description]
     """    
     self.env_edge_actions_cost = env_actions
-    # print(env_actions)
     self.env_node_actions_cost = env_actions.popitem()
-    #  = env_actions
-    # print(self.env_edge_actions_cost)
-    # print(self.env_node_actions_cost)
+
   
 
   def get_available_actions(self):
@@ -86,7 +79,6 @@ class BasicAgent():
     actions = []
     for act in self.basic_actions:
       actions.append(act)
-    # self.qtable_actions = actions
     for act in self.env_edge_actions_cost.items():
       actions.append(act)
     return actions
@@ -102,8 +94,6 @@ class BasicAgent():
     Returns:
         [type]: [description]
     """   
-    # print(type(action))
-    # print(action)
     if type(action) == tuple:
       self.movement(action[1])
       return action
@@ -113,8 +103,6 @@ class BasicAgent():
       return action
 
   
-  # def set_home_location(self, home_location):
-  #   self.home_loc = home_location
   def set_black_out_targets(self, black_loc):
     """[set black out targets locations (blackout w/o solar power) for agent logic]
 
@@ -146,8 +134,6 @@ class BasicAgent():
         cost (float): [not use for method flexibly with other action methods]
         flag (bool, optional): [For game reset, flag will restore power]. Defaults to False.
     """    
-    #check charge 
-    # print('old charge')
     if (self.ev_loc in self.charging_locations) or flag:
       self.current_battery = float(self.MAX_BATTERY)
     else:
@@ -159,12 +145,7 @@ class BasicAgent():
     Args:
         cost ([float]): [power that being drawn]
     """    
-    # print(self.current_battery)
-    # if (self.ev_loc in self.black_loc):
-    #   self.current_battery -= cost 
-    # else:
     self.current_battery -= cost
-    # print(self.current_battery)
 
   def nothing(self, cost):
     """[do nothing buffer]
@@ -215,7 +196,6 @@ class BasicAgent():
         node ([int]): [node identifier]
     """    
     self.unload_tracker[node] += 1
-    # print(self.current_battery)
 
 class _RandomAgent(BasicAgent):
   "deprecated, but kept for historical reasons"
@@ -232,8 +212,6 @@ class _RandomAgent(BasicAgent):
     Returns:
         [type]: [current agent location and it's next action]
     """    
-    # print()
-    # print('Agent Step')
     actions = self.get_available_actions()
     action = random.choice(actions)
         
@@ -241,11 +219,8 @@ class _RandomAgent(BasicAgent):
     self.dead_battery_check()
     if self.dead_battery == True:
       self.last_action = 'nothing'
-      # return self.ev_loc, "nothing"
     return self.ev_loc, self.last_action
   
-  # def reset(self):
-  #   super().reset()
 
 
 class SmartQLAgent(BasicAgent):
@@ -278,9 +253,6 @@ class SmartQLAgent(BasicAgent):
     self.i += 1
     self.obs = obs
 
-    # super().step(obs)
-    # print()
-    # print('Agent Step')
     state = str(tuple(list(self.obs.get_obs())+[round(self.current_battery,0)])) 
     actions = self.get_available_actions()
     
@@ -289,7 +261,7 @@ class SmartQLAgent(BasicAgent):
         self.action = int(self.action)
     elif self.action == 'unload':
       self.unload_tracker_update(self.ev_loc)
-    # action = random.choice(actions)
+
     def select_action(action, actions_list):
       if action in actions_list:
         return action
@@ -310,12 +282,12 @@ class SmartQLAgent(BasicAgent):
     if (self.last_action is not None) and (self.qtabletraining==True):
         self.qtable.learn(self.previous_state,
                         self.last_action,
-                        self.obs.get_reward(), #need this
+                        self.obs.get_reward(),
                         'last' if self.obs.get_last() else state)
 
     self.last_action = self.action
     self.previous_state = state
-      # return self.ev_loc, "nothing"
+
     return self.ev_loc, action_comd
 
   def dead_battery_check(self):
@@ -332,8 +304,6 @@ class SmartQLAgent(BasicAgent):
         cost (int, optional): [not use for method flexibly with other action methods]. Defaults to 0.
         flag (bool, optional): [For game reset, flag will restore power ]. Defaults to False.
     """    
-    #check charge , make sure this working
-    # print('new charge')
     if flag:
       self.current_battery = float(self.MAX_BATTERY)
     
@@ -359,7 +329,6 @@ class SmartQLAgent(BasicAgent):
       reward = max(reward,0)
       self.obs.add_reward(reward)
     self.current_battery -= cost
-    # print(self.current_battery)
 
   def reset(self):
     """[reset agent to prepare for next ep]
@@ -426,8 +395,6 @@ class RandomDataAgent(SmartQLAgent):
     Returns:
         [type]: [description]
     """    
-    # print()
-    # print('Agent Step')
     self.i += 1
     self.obs = obs
 
@@ -455,7 +422,6 @@ class RandomDataAgent(SmartQLAgent):
     if self.dead_battery == True:
       action_comd = 'nothing'
       self.last_action = 'nothing'
-      # return self.ev_loc, "nothing"
     self.last_action = self.action
 
     return self.ev_loc, action_comd

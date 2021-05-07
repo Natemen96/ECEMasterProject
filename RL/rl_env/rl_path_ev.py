@@ -1,7 +1,6 @@
 import sys 
 import os
 from os.path import isfile, join
-# print(f'Env Path: {os.getcwd()}')
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -11,7 +10,6 @@ import random
 from itertools import combinations, groupby
 import copy 
 
-# PATH = '../Data/'
 PATH = '../RL/Data/'
 
 def blen(lst):
@@ -119,23 +117,15 @@ class graph_env():
         assert numofhome == len(agents), f"Env Load Error: Number of homes must be equal number of agents"
         assert numofblackout >= blen(nonsolarhouse_data_paths), f"Env Load Error:, can't have more paths ({blen(nonsolarhouse_data_paths)}) than nodes ({numofblackout}) allocated for blackout house" 
         assert numofblackoutws >= blen(solarhouse_data_paths), f"Env Load Error:, can't have more paths ({blen(solarhouse_data_paths)}) than nodes ({numofblackoutws}) allocated for blackout solar houses"
-        # self.ev = ev
-        # self.day = 0
+
         self.agents = agents 
-        # print(agents)
         self.len_agents = blen(agents)
-        
-        # self.ep = 0
         self.i = 0
-        # self.timestep = 0
         self.max_days = 7
-        
-        # self.actionsdone = 0
         
         self.max_actions = 1 if ((max_actions -1) < -1)  else  max_actions
         self.max_i = self.max_days * self.max_actions
-        # self.max_actions = 1 if ((max_actions -1) < -1)  else  max_actions #action limit can't be less than 0
-        # self.graph = G
+        
         self.graph = self.gnp_random_connected_graph(n=n)
 
         self.color_map = []
@@ -150,7 +140,6 @@ class graph_env():
         self.blackws_nodes, buffer_nodes = self.init_update_graph(buffer_nodes, numofblackoutws,2)
         self.black_nodes, buffer_nodes = self.init_update_graph(buffer_nodes, numofblackout,1)
         self.charging_nodes, self.buffer_nodes = self.init_update_graph(buffer_nodes, numofchargingstation,4)
-        # print(self.black_nodes)
         #set costs
         self.data_sample = data_sample
         self.nonsolarhouse_power_data = []
@@ -163,7 +152,6 @@ class graph_env():
 
         #EVs start at home
         self.EV_locations = copy.deepcopy(self.home_nodes)
-        # print(self.home_nodes,self.charging_nodes)
         #give agents info
         self.get_available_action()
         self.agents_obs = []
@@ -176,7 +164,6 @@ class graph_env():
             agent.set_black_out_targets(self.blackws_nodes + self.black_nodes)
             agent.set_available_actions(self.actions[i])
             agent.set_all_loc(self.allnodes)
-            # agent.set_qtable_actions()
             agent.reset()
             obs = Observation()
             self.agents_obs.append(obs)
@@ -196,11 +183,6 @@ class graph_env():
             print(f'Make sure conda env is install or set up numpy as well as other libs')
         self.get_power_samples(blackout_data, self.max_i)
         
-        # for i,obs in enumerate(self.agents_obs):
-        #     #update obs
-        #     obs.set_obs(tuple(self.get_obs(self.EV_locations[i])))
-        #     if obs.get_last():
-        #         obs.set_last(False)
 
         print('Env loaded correctly, Simulation started')
     
@@ -298,9 +280,6 @@ class graph_env():
             else:
                 #not next to node 
                 obs.append(0)
-        # obs.append(tuple(self.graph.edges(node)))
-        # print(tuple(self.graph.edges(node)))
-        # print(neighbors)
         return obs
             
     def reset(self):
@@ -329,8 +308,6 @@ class graph_env():
             obs.set_last(True)
 
         return self.agents_obs
-        # return obs
-        # for i,agent in enumerate(self.agents):
     
 
     def get_available_action(self):
@@ -358,8 +335,7 @@ class graph_env():
                 act_weights.append(e)
                 weight = self.graph[e[0]][e[1]]["cost"] 
                 act_weights.append(weight)
-                # edge.append()
-            # print(edges) 
+
             #add the node for node actions
             act_weights.append(ev)
             node_weight= self.graph.nodes[ev]["cost"]
@@ -367,7 +343,6 @@ class graph_env():
 
             actions.append(list_to_dict(act_weights)) 
         self.actions = actions
-        # pass
 
     def ev_for_agents(self):
         """[returns ev locations for agents]
@@ -490,7 +465,6 @@ class graph_env():
         for node in self.black_nodes:
             if node != None:
                 self.graph.nodes[node]["cost"] = 1.5 
-                # print(node)
         
         for node in self.blackws_nodes:
             if node != None:
@@ -579,23 +553,17 @@ class graph_env():
                     routes = self.graph.edges(ev_loc)
                     ev_update = random.sample(list(routes), 1)[0]
                 
-                # print(ev)
-                # print(f'new location: {ev_update}')
-                # print(f'EV_index: {ev_index}')
                 if ev_loc == ev_update[0]:
                     new_ev_loc = ev_update[1]
                 else: 
                     new_ev_loc = ev_update[0]
-                # print(f'new location: {new_ev_loc}')
                 self.EV_locations[ev_index] = new_ev_loc
             else:
-                # print(type(ev))
                 ev_index = self.EV_locations.index(ev_loc)
                 if ev_loc == ev_update[0][0]:
                     new_ev_loc = ev_update[0][1]
                 else: 
                     new_ev_loc = ev_update[0][0]
-                # print(f'new location: {new_ev_loc}')
                 self.EV_locations[ev_index] = new_ev_loc
     
     def plot_nodes(self, update = True):
@@ -610,21 +578,16 @@ class graph_env():
             self.label_map = {}
             self.action_map = {}
             self.charge_map = {}
-            # self.shape_map = []
-            # print(f'current locations: {self.EV_locations}')
             for key, val in self.node_status.items():
                 if val == 1:
                     self.color_map.append('darkgrey')
                     self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
-                    # self.shape_map.append(300)
                 elif val == 2:
                     self.color_map.append('lightgrey')
                     self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
-                    # self.shape_map.append(300)
                 elif val == 4:
                     self.color_map.append('yellow')
                     self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
-                    # self.shape_map.append(300)
                 elif val == 5:
                     self.color_map.append('green')
                     self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
@@ -633,17 +596,12 @@ class graph_env():
                     self.charge_map[key] = f'Load: {self.graph.nodes[key]["cost"]}' 
 
                 if key in (self.EV_locations):
-                    # print(f'current location: {key}')
                     self.size_map.append(1000)
                     idx = self.EV_locations.index(key)
-                    # self.label_map.append(key)
-                    # self.label_map.append(self.agents[idx].current_battery)
                     self.label_map[key] = f'Current Charge: {(round(self.agents[idx].current_battery,2))}/{(self.agents[idx].MAX_BATTERY)}' 
                     self.action_map[key] = f'Last Action: {self.agents[idx].last_action}'
                 else:
                     self.size_map.append(300)
-                    # self.label_map.append(key)
-                    # self.label_map.append(" ")
                     self.label_map[key] = " "
                     self.action_map[key] = " "
 
@@ -654,9 +612,6 @@ class graph_env():
         action_map = dict(self.action_map)
         
         edge_labels = nx.get_edge_attributes(self.graph,'cost')
-        #set postions of graph for consistent ploting
-        # pos=nx.spring_layout(self.graph)
-        # pos = nx.spectral_layout(self.graph, weight="cost")
         pos =  nx.circular_layout(self.graph)
         nx.draw_networkx_edge_labels(self.graph,pos = pos, edge_labels= edge_labels )
         nx.draw(self.graph,pos = pos, node_color=self.color_map, node_size = self.size_map, with_labels=True )
