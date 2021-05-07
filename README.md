@@ -29,16 +29,16 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd ECEMasterProject
+  cd ECEMasterProject/RL
 ```
 
 ```bash
-  python RL/main.py
+  python main.py
 ```
 
 ## Installation
 
-WARNING: This is a large install (~2GB) and will take approximately 20mins depending on internet speed. Depending on your set up, you may find it easier to install the package yourself. The list can be found in the `conda_env` folder. See 'conda_env/rl_window.yml' for the most up to date package list.
+WARNING: This is a large install (~2GB) and will take approximately 30 mins depending on internet speed. Depending on your set up, you may find it easier to install the package yourself. The list can be found in the `conda_env` folder. See 'conda_env/rl_window.yml' for the most up to date package list.
 
 The conda environment follow this installation please 1st download [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
 
@@ -151,6 +151,7 @@ Episode is over when EV is out of energy or network is completely powered.
 
 ## Action & State Space
 
+```txt
     Each Agent will have 24 actions per ep by default.
 
     e+2 Actions:
@@ -158,7 +159,7 @@ Episode is over when EV is out of energy or network is completely powered.
         1 - Unload (at cost)
         1 - Recharge (no cost, expect an action)
 
-    2*n + 6*n + 300*n + 400*c States:
+    2*n + 6*n + 300*n + c States:
         n - Statuses of Each Node
             Key - Assignment
             0 - Buffer (Blue)
@@ -174,9 +175,10 @@ Episode is over when EV is out of energy or network is completely powered.
             0 - No 
             1 - Yes
         
-        c - Charge State 
-        
+        c - Charge State (400 possible values by default)
+
     where n is the number of nodes states, e is the number of edges, and c number of is Charge states 
+```
 
 ## Logic
 

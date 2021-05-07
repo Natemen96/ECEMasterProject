@@ -34,6 +34,11 @@ class BasicAgent():
     self.ep = -1
 
   def step(self, obs=None):
+    """[step, where the agent decides it's next action]
+
+    Args:
+        obs ([obs object], optional): [obs object from env]. Defaults to None.
+    """    
     #return an action, use obs to help 
     pass
 
@@ -46,6 +51,11 @@ class BasicAgent():
     self.all_loc = nodes
 
   def get_qtable_actions(self):
+    """[set all possible actions for qtable, actions function and available nodes]
+
+    Returns:
+        [list]: [all possible actions for qtable]
+    """    
     qtable_actions = ['nothing']
     for act in self.basic_actions:
       qtable_actions.append(act)
@@ -54,6 +64,11 @@ class BasicAgent():
     return qtable_actions
 
   def set_available_actions(self,env_actions):
+    """[get actions from env, gets more organized in getter]
+
+    Args:
+        env_actions ([type]): [description]
+    """    
     self.env_edge_actions_cost = env_actions
     # print(env_actions)
     self.env_node_actions_cost = env_actions.popitem()
@@ -63,6 +78,11 @@ class BasicAgent():
   
 
   def get_available_actions(self):
+    """[get actions form env]
+
+    Returns:
+        [list]: [available actions ]
+    """    
     actions = []
     for act in self.basic_actions:
       actions.append(act)
@@ -74,7 +94,14 @@ class BasicAgent():
 
 
   def do_action(self, action):
-    "expect edges or current node"
+    """[takes action and performs it]
+
+    Args:
+        action ([str or tuple]): [if str, call action's function otherwise do movement on map]
+
+    Returns:
+        [type]: [description]
+    """   
     # print(type(action))
     # print(action)
     if type(action) == tuple:
@@ -89,16 +116,36 @@ class BasicAgent():
   # def set_home_location(self, home_location):
   #   self.home_loc = home_location
   def set_black_out_targets(self, black_loc):
+    """[set black out targets locations (blackout w/o solar power) for agent logic]
+
+    Args:
+        black_loc ([type]): [black node locations]
+    """    
     self.black_loc = black_loc
 
   def set_ev_location(self, ev_location):
+    """[set current ev location for agent's logic]
+
+    Args:
+        ev_location ([type]): [en location]
+    """    
     self.ev_loc = ev_location
 
   def set_charging_locations(self, charging_locations):
-    # charging_locations = list(filter(None, charging_locations))
+    """[set possible charging locations (charging stations and home) for agent logic]
+
+    Args:
+        charging_locations ([type]): [charging locations locations]
+    """    
     self.charging_locations = charging_locations
 
   def chargeup(self, cost = 0, flag = False):
+    """[action that allows the agent to restore it's power]
+
+    Args:
+        cost (float): [not use for method flexibly with other action methods]
+        flag (bool, optional): [For game reset, flag will restore power]. Defaults to False.
+    """    
     #check charge 
     # print('old charge')
     if (self.ev_loc in self.charging_locations) or flag:
@@ -107,6 +154,11 @@ class BasicAgent():
       pass
 
   def unload(self,cost):
+    """[take power from car]
+
+    Args:
+        cost ([float]): [power that being drawn]
+    """    
     # print(self.current_battery)
     # if (self.ev_loc in self.black_loc):
     #   self.current_battery -= cost 
@@ -115,14 +167,26 @@ class BasicAgent():
     # print(self.current_battery)
 
   def nothing(self, cost):
+    """[do nothing buffer]
+
+    Args:
+        cost ([float]): [cost is passed for flexibility with other actions]
+    """    
     pass 
 
   def movement(self, cost):
+    """[calculate cost of movement when agent crosses edge]
+
+    Args:
+        cost ([float]): [miles length of edge]
+    """    
     "assuming cost is in miles"
     cost = self.avg_energy_com*cost
     self.unload(cost)
 
   def reset(self):
+    """[reset agent to prepare for next ep]
+    """    
     self.dead_battery = False 
     self.chargeup(flag=True)
     self.ep +=1
@@ -131,16 +195,25 @@ class BasicAgent():
     print(f'Current ep {self.ep}')
 
   def dead_battery_check(self):
+    """[dead battery flag setter, check if current battery is less than 0]
+    """    
     if self.current_battery < 0:
       self.dead_battery = True
   
   def unload_tracker_init(self):
+    """[keep track of what nodes are being unload so reward will go down for non-diversity]
+    """
     unload_tracker = []
     for i in range(len(self.all_loc)):
       unload_tracker.append(0)
     self.unload_tracker = unload_tracker
 
   def unload_tracker_update(self, node):
+    """[get unload node and add a increase counter]
+
+    Args:
+        node ([int]): [node identifier]
+    """    
     self.unload_tracker[node] += 1
     # print(self.current_battery)
 
@@ -194,6 +267,14 @@ class SmartQLAgent(BasicAgent):
     self.quiet = quiet
 
   def step(self, obs):
+    """[step, where the agent decides it's next action. Smart Agent uses Qtable to make decsions]
+
+    Args:
+        obs ([obs object]): [obs object from env]
+
+    Returns:
+        [type]: [current agent location and it's next action]
+    """    
     self.i += 1
     self.obs = obs
 
@@ -238,11 +319,19 @@ class SmartQLAgent(BasicAgent):
     return self.ev_loc, action_comd
 
   def dead_battery_check(self):
+    """[dead battery check, agent reward is set to zero for dead battery ]
+    """    
     if self.current_battery < 0:
       self.dead_battery = True
       self.obs.set_reward(-1)
 
   def chargeup(self, cost = 0, flag = False):
+    """[chargeup gives agent reward based on how low it's battery was. Reward = (Battery_0  - Battery_i)/Battery_0 ]
+
+    Args:
+        cost (int, optional): [not use for method flexibly with other action methods]. Defaults to 0.
+        flag (bool, optional): [For game reset, flag will restore power ]. Defaults to False.
+    """    
     #check charge , make sure this working
     # print('new charge')
     if flag:
@@ -259,8 +348,11 @@ class SmartQLAgent(BasicAgent):
       pass
 
   def unload(self,cost):
-    # print(self.current_battery)
-    # print('new unload')
+    """[unload give agent reward based on how often it was done it before that node. reward can't go below 0. function: reward = ((-log_10((# of unloads for node + 30)/10) + .53) * cost_of_unload)*25]
+
+    Args:
+        cost ([type]): [description]
+    """    
     if (self.ev_loc in self.black_loc) and self.action == 'unload':
       unload_tic = self.unload_tracker[self.ev_loc]
       reward = ((-1*math.log10((unload_tic + 30)/10)+.53) * cost)*25
@@ -270,6 +362,8 @@ class SmartQLAgent(BasicAgent):
     # print(self.current_battery)
 
   def reset(self):
+    """[reset agent to prepare for next ep]
+    """    
     self.dead_battery = False 
     self.chargeup(flag=True)
     self.last_action = None
@@ -286,20 +380,32 @@ class SmartQLAgent(BasicAgent):
     print(f'Current ep {self.ep}')
   
   def create_qtable(self):
+    """[initialize qtable from qtable class]
+    """    
     self.qtable = QLearningTable(self.get_qtable_actions())
 
   def load_qtable(self, qtable_file):
+    """[load qtable from h5 file]
+
+    Args:
+        qtable_file ([str]): [h5 file where qtable (panda dataframe) was stored]
+    """    
     self.qtable = QLearningTable(self.get_qtable_actions())
     self.qtable.load_qtable(qtable_file)
 
 def write_to_csv(tosave, PATH):
-    "Helper function to write to csv to make data collection less painful"
-    if not os.path.exists(PATH):
-        with open(PATH, 'w', newline='') as csvfile:
-            csvfile.close()
-    with open(PATH, 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow([tosave])
+  """[Helper function to write to csv to make data collection less painful]
+
+  Args:
+      tosave ([type]): [data to be save, gets converted to list]
+      PATH ([type]): [path to save the data to]
+  """  
+  if not os.path.exists(PATH):
+      with open(PATH, 'w', newline='') as csvfile:
+          csvfile.close()
+  with open(PATH, 'a', newline='') as csvfile:
+      writer = csv.writer(csvfile)
+      writer.writerow([tosave])
 
 
 class RandomDataAgent(SmartQLAgent):
@@ -312,6 +418,14 @@ class RandomDataAgent(SmartQLAgent):
     super().__init__(car, qtabletraining = False, quiet = False)
 
   def step(self, obs=None):
+    """[step, where the agent decides it's next action. Random Agent makes a random choice.]
+
+    Args:
+        obs ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        [type]: [description]
+    """    
     # print()
     # print('Agent Step')
     self.i += 1
@@ -347,6 +461,8 @@ class RandomDataAgent(SmartQLAgent):
     return self.ev_loc, action_comd
   
   def reset(self):
+    """[Uses Smart Agent reset]
+    """    
     super().reset()
 
 if __name__ == "__main__":

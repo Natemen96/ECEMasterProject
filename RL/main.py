@@ -55,6 +55,9 @@ def main():
   # ep // 10 saving every 1/10 qtable
   # sample = ep // 10
 
+  #save every qtable (will get computation and storage expensive, really fast)
+  # sample = 1 
+
   #make sample out of range of ep (rec: >= 3*ep) to avoid saving data
   sample = 3*ep
   
@@ -80,7 +83,7 @@ def main():
       #uncomment to turn on visual with saving 
       # plot_rl_env(network_env, img_folder_path)
       #uncomment to turn on visual 
-      plot_rl_env(network_env)
+      # plot_rl_env(network_env)
       
       #how to fet up loop for env - agent interaction 
       # marl doesn't function yet.  
