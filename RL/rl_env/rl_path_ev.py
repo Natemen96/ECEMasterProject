@@ -15,7 +15,14 @@ import copy
 PATH = '../RL/Data/'
 
 def blen(lst):
-    "Better len for list, doesn't count Nones"
+    """[Different len for list that doesn't count Nones]
+
+    Args:
+        lst ([list]): [any list]
+
+    Returns:
+        [type]: [number of element within list, not including None]
+    """    
     return sum(x is not None for x in lst)
 
 class Observation():
@@ -27,24 +34,59 @@ class Observation():
         self.last = False
         
     def set_obs(self, obs):
+        """[set obs data value]
+
+        Args:
+            obs ([type]): [obs]
+        """        
         self.obs = obs 
         
     def get_obs(self):
+        """[return obs data]
+
+        Returns:
+            [type]: [obs]
+        """        
         return self.obs 
     
     def add_reward(self,reward):
+        """[add reward to agent]
+
+        Args:
+            reward ([float]): [reward value]
+        """        
         self.reward += reward
 
     def set_reward(self, reward):
+        """[set reward to fixed value]
+
+        Args:
+            reward ([type]): [reward value]
+        """        
         self.reward = reward 
         
     def get_reward(self):
+        """[return reward value]
+
+        Returns:
+            [float]: [reward value]
+        """        
         return self.reward
 
     def set_last(self,last_flag):
+        """[set Flag to be True or False]
+
+        Args:
+            last_flag ([boolean]): [Flag]
+        """        
         self.last = last_flag
         
     def get_last(self):
+        """[return last flag]
+
+        Returns:
+            [boolean]: [flag for last]
+        """        
         return self.last 
 
 
@@ -163,14 +205,20 @@ class graph_env():
         print('Env loaded correctly, Simulation started')
     
     def step(self, ev_loc = None ,action = None):
+        """[take in actions from agents as well as their new locations]
+
+        Args:
+            ev_loc ([type], optional): [agents locations]. Defaults to None.
+            action ([type], optional): [agents actions]. Defaults to None.
+
+        Returns:
+            [type]: [agents observation]
+        """        
         if self.game_over == True:
             return self.env_close() 
-        # print()
-        # print('Env Step')
-        # print(ev_loc)
-        # print(action)
+
         len_max_buffer = blen(self.buffer_nodes)+blen(self.blackws_nodes)+blen(self.black_nodes)
-        # print(len_max_buffer)
+
         if self.i == self.max_i:
             self.game_over_reason = self.game_over_reasons[2]
             return self.env_close()
@@ -180,7 +228,7 @@ class graph_env():
             return self.env_close()
             
         else: 
-            #TODO: Reduce this to a function?
+            #TODO: Reduce this to another function?
             stuck_agents = []
 
             for i,agent in enumerate(self.agents):
@@ -220,12 +268,21 @@ class graph_env():
     
 
     def get_obs(self, node):
-        """
-        starting at i =0, 
+        """[starting at i =0, 
         1st value is the state of node_i, 
         next value is best cost to node_i via dijkstra, 
         last value is if the current location of the agent is next to node_i or not
-        check next node
+        check next node]
+
+        Args:
+            node ([type]): [current location of ev, to get obs for]
+
+        Returns:
+            [type]: [obs]
+        """ 
+
+        """
+
         """
         obs = []
         len_path = dict(nx.all_pairs_dijkstra(self.graph,weight='cost'))
@@ -247,9 +304,19 @@ class graph_env():
         return obs
             
     def reset(self):
+        """[buffer to call env_close]
+
+        Returns:
+            [type]: [description]
+        """        
         return self.env_close()
     
     def env_close(self):
+        """[close env, set logic for agents]
+
+        Returns:
+            [type]: [return all agents obs]
+        """        
         print(f'Game over: {self.game_over_reason}, please reinit')
         print(f'Game ended in {self.i} out of {self.max_i} steps')
         self.i = 0
@@ -267,8 +334,18 @@ class graph_env():
     
 
     def get_available_action(self):
+        """[get avilable action for agents]
+        """        
 
         def list_to_dict(a):
+            """[Helper function for converting list to dict]
+
+            Args:
+                a ([list]): [list to be converted]
+
+            Returns:
+                [dict]: [resultant dict]
+            """            
             it = iter(a)
             res_dct = dict(zip(it, it))
             return res_dct
@@ -293,25 +370,59 @@ class graph_env():
         # pass
 
     def ev_for_agents(self):
+        """[returns ev locations for agents]
+
+        Returns:
+            [type]: [ev locations]
+        """        
         return self.EV_locations 
 
     def init_update_graph(self,nodes,num_to_update,val):
+        """[Function use for setting value for graph]
+
+        Args:
+            nodes ([type]): [list of nodes to modify]
+            num_to_update ([int]): [# of nodes to change]
+            val ([int]): [what value to set it to for identification]
+
+        Returns:
+            [type]: [description]
+        """        
         nodes_to_updates, buffer_nodes = self.remove_node(nodes, num_to_update)
         for node in nodes_to_updates:
-            # print(home)
             node_update = {node: val}
             self.node_status.update(node_update)
+
         return nodes_to_updates, buffer_nodes
 
     def remove_node(self,nodes, numtoremove=1):
+        """[separate nodes]
+
+        Args:
+            nodes ([type]): [list of numbers]
+            numtoremove (int, optional): [number of node to remove from list]. Defaults to 1.
+
+        Returns:
+            [type]: [new list of node, and nodes removed]
+        """        
         if numtoremove < 1:
             return [None], nodes
         nodes = list(nodes)
         samples = random.sample(nodes, 1)
         new_nodes = list(set(nodes).symmetric_difference(set(samples)))
         return samples, new_nodes
+
     def update_cost(self):
+        """[Update cost based on sample from files]
+        """        
         def update_node_cost(data, i ,black_nodes):
+            """[helper function for updating node cost]
+
+            Args:
+                data ([type]): [list of data point]
+                i ([type]): [idx]
+                black_nodes ([type]): [nodes to update]
+            """            
             data_len = len(data)
             data_idx = self.i % self.data_sample
             data_idx = round((data_idx / self.data_sample) * data_len)
@@ -333,6 +444,12 @@ class graph_env():
     
     
     def set_cost(self,n, random_flag = False):
+        """[set cost based on files given]
+
+        Args:
+            n ([int]): [number of nodes]
+            random_flag (bool, optional): [pick a random file from a folder]. Defaults to False.
+        """        
         self._set_cost(n)
         
         def load_data(house_power_data, file_paths):
@@ -360,6 +477,11 @@ class graph_env():
 
 
     def _set_cost(self,n):
+        """[old set_cost, use if no paths were given]
+
+        Args:
+            n ([int]): [number of nodes in graph]
+        """        
         a = np.round(np.random.rand(n,n)[np.triu_indices(n)]*30,1)
         
         for i,e in enumerate(self.graph.edges()):
@@ -380,6 +502,12 @@ class graph_env():
 
 
     def get_power_samples(self, blackout_data, numofsample):
+        """[check blackout data to get new sample]
+
+        Args:
+            blackout_data ([type]): [list or numpy array]
+            numofsample ([type]): [sample based on max amount of ep]
+        """        
         self.blackout_samples = []
         totalsamples = len(blackout_data)
         for i in range(numofsample): 
@@ -387,7 +515,8 @@ class graph_env():
             self.blackout_samples.append(blackout_data[idx])
 
     def power_check(self):
-        "read from blackout sample to figure out if power is back 1,2 -> 3 "
+        """[read from blackout sample to figure out if power is back 1,2 -> 3]
+        """        
 
         p = self.blackout_samples[self.i]
         
@@ -418,13 +547,26 @@ class graph_env():
                 self.buffer_nodes.append(node)
     
     def movement_options(self, ev = None):
+        """[returns movements options, possibly deprecated]
+
+        Args:
+            ev ([type], optional): [ev/node to check]. Defaults to None.
+
+        Returns:
+            [type]: [ev's possible actions]
+        """        
         if ev == None: 
             ev = self.EV_locations[0]
         routes = self.graph.edges(ev)
         return routes
 
     def update_ev_location(self, ev_loc=None,ev_update = None):
-        "ev_update (move up) - edge: (s,t), ev - node: s"
+        """[ev_update (move up) - edge: (s,t), ev - node: s]
+
+        Args:
+            ev_loc ([type], optional): [ev prev location]. Defaults to None.
+            ev_update ([type], optional): [edge that ev travel through]. Defaults to None.
+        """        
         if ev_update in ["nothing","chargeup","unload"]:
             pass 
         else:
@@ -457,6 +599,11 @@ class graph_env():
                 self.EV_locations[ev_index] = new_ev_loc
     
     def plot_nodes(self, update = True):
+        """[plot nodes and edges for visualizations]
+
+        Args:
+            update (bool, optional): [Check for graph update if True, otherwise doesn't]. Defaults to True.
+        """        
         if update == True: 
             self.color_map = []
             self.size_map = []
@@ -524,10 +671,16 @@ class graph_env():
         nx.draw_networkx_labels(self.graph, pos=pos,labels = self.charge_map, verticalalignment="bottom")
 
     def gnp_random_connected_graph(self, n, p = .5):
-        """ 
-        Generates a random undirected graph, similarly to an Erdős-Rényi 
-        graph, but enforcing that the resulting graph is conneted 
-        """
+        """[Generates a random undirected graph, similarly to an Erdős-Rényi 
+        graph, but enforcing that the resulting graph is connected]
+
+        Args:
+            n ([type]): [number of nodes]
+            p (float, optional): [smaller p, less edges, larger more edges]. Defaults to .5.
+
+        Returns:
+            [type]: [graph]
+        """        
         edges = combinations(range(n), 2)
         G = nx.Graph()
         G.add_nodes_from(range(n))
@@ -548,15 +701,6 @@ class graph_env():
 if __name__ == "__main__":
     n = 5 
     env = graph_env(n)
-    # env.get_available_action()
     env.step()
-    # print(env.actions)
-    # print(env.node_status)
-    # for i in range(5):
-    #     env.plot_nodes()
-    #     plt.pause(5)
-    #     plt.close()
-    #     env.update_ev_location()
-# main()
 
 

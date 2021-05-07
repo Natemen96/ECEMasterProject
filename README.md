@@ -1,10 +1,10 @@
 # ECEMasterProject
 
 - [ECEMasterProject](#ecemasterproject)
-  - [Run Locally](#run-locally)
-  - [Installation](#installation)
   - [Purpose](#purpose)
   - [Demo](#demo)
+  - [Run Locally](#run-locally)
+  - [Installation](#installation)
   - [Task for Agent](#task-for-agent)
   - [Environment Overview](#environment-overview)
   - [Agent Overview](#agent-overview)
@@ -17,6 +17,26 @@
   - [Lessons Learned](#lessons-learned)
   - [Acknowledgements](#acknowledgements)
   - [Authors](#authors)
+
+## Purpose
+
+In situations of natural disasters/phenomenons, blackouts can occur. To combat this, EV (electric vehicles) drivers can use their vehicles as batteries for customers/ clients. To simulate the difficulty of this challenge of getting to as many customers as possible until the blackout period is over, a RL environment was created. This environment features random scenarios based on node network size, amount of the houses (can't be larger than node size), blackout data, and housing models to simulate a blackout response in a high level matter.
+
+## Demo
+
+![Demo of RL environment + random agent in action](visuals/demogif.gif)
+
+Example of an random agent in action.
+
+Load represents the power needed at the moment from the node.
+
+Current Charge represents the power the agent (or car) has.
+
+Values on edges represents the miles of the edge cost to go through.
+
+Blue node represents buffers. Green node represents homes. Grey node represent blackout out node.
+
+More details can be found in [Action & State Space](#action--state-space) section.
 
 ## Run Locally
 
@@ -40,9 +60,9 @@ Go to the project directory
 
 WARNING: This is a large install (~2GB) and will take approximately 30 mins depending on internet speed. Depending on your set up, you may find it easier to install the package yourself. The list can be found in the `conda_env` folder. See 'conda_env/rl_window.yml' for the most up to date package list.
 
-The conda environment follow this installation please 1st download [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
+For easy installing, using a conda first make sure you have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 
-After conda is install do the following to set up the environment
+After conda is installed do the following to set up the environment
 
 ```bash
   conda env create -f conda_env/rl_window.yml --name rl_env  #or any name you prefer
@@ -51,26 +71,6 @@ After conda is install do the following to set up the environment
 ```
 
 make sure to run the program within the conda env.
-
-## Purpose
-
-In situations of natural disasters/phenomenons, blackouts can occur. To combat this, EV (electric vehicles) drivers can use their vehicles as batteries for customers/ clients. To simulate the difficulty of this challenge of getting to as many customers as possible until the blackout period is over, a RL environment was created. This environment features random scenarios based on node network size, amount of the houses (can't be larger than node size), blackout data, and housing models to simulate a blackout response in a high level matter.
-
-## Demo
-
-![Demo of RL environment + random agent in action](visuals/demogif.gif)
-
-Example of an random agent in action.
-
-Load represents the power needed at the moment from the node.
-
-Current Charge represents the power the agent (or car) has.
-
-Values on edges represents the miles of the edge cost to go through.
-
-Blue node represents buffers. Green node represents homes. Grey node represent blackout out node.
-
-More details can be found in [Action & State Space](#action--state-space) section.
 
 ## Task for Agent
 
@@ -96,8 +96,9 @@ Args:
     station]. Defaults to 0.
     max_actions (int, optional): [max number of action can be done 
     times 7.  By default 3 (7) = 21]. Defaults to 3.
-    blackout_str (str, optional): [Reads Blackout data from npy file]
-    . Defaults to 'Brazoria'.
+    blackout_str (str, optional): [Reads Blackout data from npy 
+    file. Blackout data from the 2021 Texas Blackout, a file for 
+    each country]. Defaults to 'Brazoria'.
     agents (list, optional): [Agent objects]. Defaults to [None].
     nonsolarhouse_data_paths (list, optional): [Path for npy file 
     with nonsolar data info. Added to a node per path.]. Defaults to 
@@ -208,7 +209,6 @@ DRL and Classic Optimization techniques
 Debug for MARL
 
 Convert to OpenAI environment
-
 
 ## Lessons Learned
 
