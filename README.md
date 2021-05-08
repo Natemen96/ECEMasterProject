@@ -1,6 +1,6 @@
-# ECE Master Project - Scalable Network Based RL Environment for High Level EV Natural Disaster Response Simulation
+# ECE Master Project - Scalable Network-Based RL Environment for High-Level EV Natural Disaster Response Simulation
 
-- [ECE Master Project - Scalable Network Based RL Environment for High Level EV Natural Disaster Response Simulation](#ece-master-project---scalable-network-based-rl-environment-for-high-level-ev-natural-disaster-response-simulation)
+- [ECE Master Project - Scalable Network-Based RL Environment for High-Level EV Natural Disaster Response Simulation](#ece-master-project---scalable-network-based-rl-environment-for-high-level-ev-natural-disaster-response-simulation)
   - [Purpose](#purpose)
   - [Demo](#demo)
   - [Run Locally](#run-locally)
@@ -20,7 +20,7 @@
   - [Lessons Learned](#lessons-learned)
   - [Acknowledgements](#acknowledgements)
   - [Authors](#authors)
-  - [License](#license)
+  - [License and Badges](#license-and-badges)
 
 ## Purpose
 
@@ -338,6 +338,7 @@ Thank you to [Matt Leacock](https://en.wikipedia.org/wiki/Matt_Leacock) the crea
 
 - [@Natemen96](https://www.github.com/Natemen96)
 
-## License
+## License and Badges
 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://choosealicense.com/licenses/gpl-3.0/)
+[![DOI](https://zenodo.org/badge/326845589.svg)](https://zenodo.org/badge/latestdoi/326845589)
