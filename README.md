@@ -13,12 +13,14 @@
   - [Logic](#logic)
   - [Scalability](#scalability)
   - [Optimizations](#optimizations)
-  - [NoteBooks Overview](#notebooks-overview)
+  - [Data Overview](#data-overview)
   - [Model Overview](#model-overview)
+  - [NoteBooks Overview](#notebooks-overview)
   - [Extras Ideas](#extras-ideas)
   - [Lessons Learned](#lessons-learned)
   - [Acknowledgements](#acknowledgements)
   - [Authors](#authors)
+  - [License](#license)
 
 ## Purpose
 
@@ -101,7 +103,7 @@ Args:
     max_actions (int, optional): [max number of action can be done 
     times 7.  By default 3 (7) = 21]. Defaults to 3.
     blackout_str (str, optional): [Reads Blackout data from npy 
-    file. Blackout data from the 2021 Texas Blackout, a file for 
+    file. Blackout data from the 2021 Texas Power Crisis, a file for 
     each country]. Defaults to 'Brazoria'.
     agents (list, optional): [Agent objects]. Defaults to [None].
     nonsolarhouse_data_paths (list, optional): [Path for npy file 
@@ -201,70 +203,101 @@ Can be scaled to multiple EV (MARL would be needed), & a larger network. MARL ha
 
 During a test run of 50k Eps the smart agent that was support with Qtables had 263.13% improvement compared to a random agent (that does random actions).
 
-## NoteBooks Overview
+## Data Overview
 
 ```txt
-analysis_c0.ipynb 
-    -Analysis of classifier and regression model on solar houses data
 
-analysis_c1.ipynb 
-    -Analysis of classifier and regression model on nonsolar houses data
+scripts/Data/TexasBlackout.csv
+    -csv file of data collected from https://poweroutage.us/area/state/texas during the 2021 Texas Power Crisis with the following  
+    - Metrics: ID,County,Customers Tracked,Customers Out,Outage %,DateTime
 
-cluster.ipynb
-    -Creation and Analysis of classifier that can distinguish between solar and nonsolar data
+ECEMasterProject/RL/Data/
+    Avg_House_0/
+        - npy files of average daily power per every 15 mins of various houses provide by Dataport
 
-compare_qtable_analyis.ipynb
-    -Comparing Qtable Smart Agent with Random Agent Baseline
+    Avg_House_1/
+        - npy files of next day regression of Avg_House_0 per house
+    
+    Avg_House_n/
+        - npy files of concatenation of Avg_House_0 adn Avg_House_1 per houses
 
-D_LSTM_HousingData.ipynb
-    -Creation and analysis of regression on avg housing data where the original data sample occurs every 15 mins -> 98 sample per day
+    County/
+        - npy files of Texas County that were effect the most during the 2021 Texas Power Crisis
 
-Dp1_analysis.ipynb
-    -Creation and analysis of regression on one house
+RL/agent/Sim_Data
+    - csv file result from various RL training, only stored reward. 
 
-EveryNyHouseAvg.ipynb
-    -Creation and analysis of regression on all house samples with model trained on one house (house 1)
-
-LSTM_cluster0.ipynb
-    -Creation and analysis of regression on one house using most of the solar housing data 
-
-LSTM_cluster1.ipynb
-    -Creation and analysis of regression on one house using most of the nonsolar housing data
-
-qtable_analyis_4_19.ipynb
-    -Analysis of Smart Agents performance
-
-qtable_analyis_4_22.ipynb
-    -Analysis of Smart Agents performance
-
-qtable_analyis.ipynb
-    -Analysis of Smart Agents performance
-
-random_agent_analyis.ipynb
-    -Analysis of Random Agents performance
-
-Texas_Blackout.ipynb
-    -Analysis of recorded Blackout Data
 ```
+
 
 ## Model Overview
 
 ```txt
-KM/ 
-    -Classifier models trained using Time Series K Means
+models/
 
-LSTM/ 
-    -Old LSTM regression model trained on one houe
+    KM/ 
+        -Classifier models trained using Time Series K Means stored in h5
 
-LSTM_nonsolar/
-    -LSTM regression model trained on non solar data
+    LSTM/ 
+        -Old LSTM regression model trained on one house stored in h5
 
-LSTM_solar/
-    -LSTM regression model trained on solar data
+    LSTM_nonsolar/
+        -LSTM regression model trained on non solar data stored in h5
 
-Qtables/
-    -Qtables from RL training
+    LSTM_solar/
+        -LSTM regression model trained on solar data stored in h5
 
+    Qtables/
+        -Qtables from RL training stored in h5
+
+```
+
+## NoteBooks Overview
+
+```txt
+notebooks/
+
+    analysis_c0.ipynb 
+        -Analysis of classifier and regression model on solar houses data
+
+    analysis_c1.ipynb 
+        -Analysis of classifier and regression model on nonsolar houses data
+
+    cluster.ipynb
+        -Creation and Analysis of classifier that can distinguish between solar and nonsolar data
+
+    compare_qtable_analyis.ipynb
+        -Comparing Qtable Smart Agent with Random Agent Baseline
+
+    D_LSTM_HousingData.ipynb
+        -Creation and analysis of regression on avg housing data where the original data sample occurs every 15 mins -> 98 sample per day
+
+    Dp1_analysis.ipynb
+        -Creation and analysis of regression on one house
+
+    EveryNyHouseAvg.ipynb
+        -Creation and analysis of regression on all house samples with model trained on one house (house 1)
+
+    LSTM_cluster0.ipynb
+        -Creation and analysis of regression on one house using most of the solar housing data 
+
+    LSTM_cluster1.ipynb
+        -Creation and analysis of regression on one house using most of the nonsolar housing data
+
+    qtable_analyis_4_19.ipynb
+        -Analysis of Smart Agents performance
+
+    qtable_analyis_4_22.ipynb
+        -Analysis of Smart Agents performance
+
+    qtable_analyis.ipynb
+        -Analysis of Smart Agents performance
+
+    random_agent_analyis.ipynb
+        -Analysis of Random Agents performance
+
+    Texas_Blackout.ipynb
+        -Analysis of recorded Blackout Data
 ```
 
 ## Extras Ideas
@@ -289,7 +322,7 @@ Learned about networkx and it's capabilities for graph theory related for projec
 
 Learned more about making reinforcement learning environments and agents.
 
-Learned more about data scraping as I needed to scrap blackout data during the [Texas Blackout](https://en.wikipedia.org/wiki/2021_Texas_power_crisis)
+Learned more about data scraping as I needed to scrap blackout data during the [2021 Texas Power Crisis](https://en.wikipedia.org/wiki/2021_Texas_power_crisis)
 
 Learned how to make a gif using images in python.
 
@@ -305,11 +338,6 @@ Thank you to [Matt Leacock](https://en.wikipedia.org/wiki/Matt_Leacock) the crea
 
 - [@Natemen96](https://www.github.com/Natemen96)
 
-<!-- ## Badges
+## License
 
-Add badges from somewhere like: [shields.io](https://shields.io/)
-
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
-[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0) -->
-  
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://choosealicense.com/licenses/gpl-3.0/)
