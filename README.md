@@ -74,6 +74,8 @@ After conda is installed do the following to set up the environment
 
 make sure to run the program within the conda env.
 
+Housing Data can be download from pecan street/[dataport](https://www.pecanstreet.org/dataport/)
+
 ## Task for Agent
 
 Start at "Home" (a node) travel to each location in exchange for power (main resource for EV),
