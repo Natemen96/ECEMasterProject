@@ -123,14 +123,18 @@ Args:
 BasicAgent: Basic Agent that act as skeleton for other agent. Won't work by itself.
 
 Args:
-    car ([dict]): [car information in the form of a python dictionary]
+    car ([dict]): [car information in the form of a python
+     dictionary. Required dict information: model, make, year,
+     avg_energy_consumption(kWh/mile), battery_capacity(kWh)]
 ```
 
 ```txt
 SmartQLAgent: Smart Agent that uses Qtable to make decisions
 
 Args:
-    car ([dict]): [car information in the form of a python dictionary]
+    car ([dict]): [car information in the form of a python 
+    dictionary. Required dict information: model, make, year,
+     avg_energy_consumption(kWh/mile), battery_capacity(kWh)]
     sample_rate (int, optional): [decides how often a sample of the
     qtable is taken. If left to default it's every 1/100 of total ep]
     . Defaults to 100.
@@ -146,7 +150,8 @@ use Observation.
 
 Args:
     car ([dict]): [car information in the form of a python 
-    dictionary]
+    dictionary. Required dict information: model, make, year,
+     avg_energy_consumption(kWh/mile), battery_capacity(kWh)]
 ```
 
 ## Reward
@@ -226,6 +231,10 @@ ECEMasterProject/RL/Data/
 
 RL/agent/Sim_Data
     - csv file result from various RL training, only stored reward. 
+
+RL/agent/agent_jsons/
+    -various json file of EV information 
+    -Metrics: model, make, year, avg_energy_consumption(kWh/mile), battery_capacity(kWh), source
 
 ```
 

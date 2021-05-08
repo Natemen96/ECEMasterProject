@@ -16,7 +16,7 @@ class BasicAgent():
     """[BasicAgent: Basic Agent that act as skeleton for other agent. Won't work by it's self.]
 
     Args:
-        car ([dict]): [car information in the form of a python dictionary]
+        car ([dict]): [car information in the form of a python dictionary car information in the form of a python dictionary. Required dict information: model, make, year, avg_energy_consumption(kWh/mile), battery_capacity(kWh)]
     """    
     self.model = car['model']
     self.make = car['make']
@@ -198,8 +198,12 @@ class BasicAgent():
     self.unload_tracker[node] += 1
 
 class _RandomAgent(BasicAgent):
-  "deprecated, but kept for historical reasons"
   def __init__(self, car):
+    """[deprecated Random Agent, but kept for historical reasons]
+
+    Args:
+        car ([type]): [car information in the form of a python dictionary. Required dict information: model, make, year, avg_energy_consumption(kWh/mile), battery_capacity(kWh)]
+    """    
     super().__init__(car)
     self.last_action = 'nothing'
 
@@ -228,7 +232,7 @@ class SmartQLAgent(BasicAgent):
     """[SmartQLAgent: Smart Agent that uses Qtable to make decisions]
 
     Args:
-        car ([dict]): [car information in the form of a python dictionary]
+        car ([dict]): [car information in the form of a python dictionary. Required dict information: model, make, year, avg_energy_consumption(kWh/mile), battery_capacity(kWh)]
         sample_rate (int, optional): [decides how often a sample of the qtable is taken. If left to default it's every 1/100 of total ep]. Defaults to 100.
         qtabletraining (bool, optional): [Flag for turning qtable training on]. Defaults to True.
         quiet (bool, optional): [Flag for turning data collection on]. Defaults to True.
@@ -382,7 +386,7 @@ class RandomDataAgent(SmartQLAgent):
     """[RandomDataAgent: Used for data collection of random agent. Doesn't use Observation.]
 
     Args:
-        car ([dict]): [car information in the form of a python dictionary]
+        car ([dict]): [car information in the form of a python dictionary. Required dict information: model, make, year, avg_energy_consumption(kWh/mile), battery_capacity(kWh)]
     """    
     super().__init__(car, qtabletraining = False, quiet = False)
 

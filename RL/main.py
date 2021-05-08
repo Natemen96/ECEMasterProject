@@ -5,10 +5,8 @@ import matplotlib.pyplot as plt
 import rl_env.rl_path_ev as env
 import agent.agent as agents
 
-# print()
-# print(f'Main Path: {os.getcwd()}')
 
-PATH = '../RL/agent/'
+AGENTS_PATH = '../RL/agent/agent_jsons/'
 
 MODEL_PATH = '../models/Qtables/'
 
@@ -39,7 +37,7 @@ def plot_rl_env(network_env, save_plt_path = None):
 def main():
   "an example of how to use the env and agents together"
   #agent parameter can be change with json files
-  with open(PATH+'nissan_leaf_2017.json') as f:
+  with open(AGENTS_PATH+'nissan_leaf_2017.json') as f:
   # with open(PATH+'nissan_leaf_2019.json') as f:
   # with open(PATH+'dying_nissan_leaf.json') as f:
     nissan_leaf = json.load(f)
