@@ -13,6 +13,8 @@
   - [Logic](#logic)
   - [Scalability](#scalability)
   - [Optimizations](#optimizations)
+  - [NoteBooks Overview](#notebooks-overview)
+  - [Model Overview](#model-overview)
   - [Extras Ideas](#extras-ideas)
   - [Lessons Learned](#lessons-learned)
   - [Acknowledgements](#acknowledgements)
@@ -193,10 +195,75 @@ At a minimum a **Q-Learning** was used to find the best solutions.
 
 Can be scaled to multiple EV (MARL would be needed), & a larger network. MARL has not been fully tested and is likely very buggy.
 
-
 ## Optimizations
 
 During a test run of 50k Eps the smart agent that was support with Qtables had 263.13% improvement compared to a random agent (that does random actions).
+
+## NoteBooks Overview
+
+```txt
+analysis_c0.ipynb 
+    -Analysis of classifier and regression model on solar houses data
+
+analysis_c1.ipynb 
+    -Analysis of classifier and regression model on nonsolar houses data
+
+cluster.ipynb
+    -Creation and Analysis of classifier that can distinguish between solar and nonsolar data
+
+compare_qtable_analyis.ipynb
+    -Comparing Qtable Smart Agent with Random Agent Baseline
+
+D_LSTM_HousingData.ipynb
+    -Creation and analysis of regression on avg housing data where the original data sample occurs every 15 mins -> 98 sample per day
+
+Dp1_analysis.ipynb
+    -Creation and analysis of regression on one house
+
+EveryNyHouseAvg.ipynb
+    -Creation and analysis of regression on all house samples with model trained on one house (house 1)
+
+LSTM_cluster0.ipynb
+    -Creation and analysis of regression on one house using most of the solar housing data 
+
+LSTM_cluster1.ipynb
+    -Creation and analysis of regression on one house using most of the nonsolar housing data
+
+qtable_analyis_4_19.ipynb
+    -Analysis of Smart Agents performance
+
+qtable_analyis_4_22.ipynb
+    -Analysis of Smart Agents performance
+
+qtable_analyis.ipynb
+    -Analysis of Smart Agents performance
+
+random_agent_analyis.ipynb
+    -Analysis of Random Agents performance
+
+Texas_Blackout.ipynb
+    -Analysis of recorded Blackout Data
+```
+
+## Model Overview
+
+```txt
+KM/ 
+    -Classifier models trained using Time Series K Means
+
+LSTM/ 
+    -Old LSTM regression model trained on one houe
+
+LSTM_nonsolar/
+    -LSTM regression model trained on non solar data
+
+LSTM_solar/
+    -LSTM regression model trained on solar data
+
+Qtables/
+    -Qtables from RL training
+
+```
 
 ## Extras Ideas
 
