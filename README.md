@@ -1,6 +1,6 @@
-# ECEMasterProject
+# ECE Master Project - Scalable Network Based RL Environment for High Level EV Natural Disaster Response Simulation
 
-- [ECEMasterProject](#ecemasterproject)
+- [ECE Master Project - Scalable Network Based RL Environment for High Level EV Natural Disaster Response Simulation](#ece-master-project---scalable-network-based-rl-environment-for-high-level-ev-natural-disaster-response-simulation)
   - [Purpose](#purpose)
   - [Demo](#demo)
   - [Run Locally](#run-locally)
